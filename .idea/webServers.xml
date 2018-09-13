@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="e5c2a8df-c0e5-4898-972a-54151ced244b" name="GPU2" url="http://www.fstljx.com">
+        <fileTransfer host="www.fstljx.com" port="8888" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="8888" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
