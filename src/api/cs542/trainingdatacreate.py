@@ -28,13 +28,13 @@ for f in os.listdir(os.path.join(oripath, 'Good_License')):
     ext = os.path.splitext(f)[1]
     if ext.lower() not in valid_images:
         continue
-    good_imgs.append(Image.open(os.path.join(oripath, 'Good_License', f)))
+    good_imgs.append(Image.open(os.path.join(oripath, 'Good_License', f)).convert('RGB'))
 
 for f in os.listdir(os.path.join(oripath, 'Bad_License')):
     ext = os.path.splitext(f)[1]
     if ext.lower() not in valid_images:
         continue
-    bad_imgs.append(Image.open(os.path.join(oripath, 'Bad_License', f)))
+    bad_imgs.append(Image.open(os.path.join(oripath, 'Bad_License', f)).convert('RGB'))
 
 print('finished loading images')
 
@@ -60,8 +60,8 @@ for i in range(len(bad_imgs)):
     #Slicing the pictures first
     img = bad_imgs[i]
     (imageWidth, imageHeight) = img.size
-    rangex = img.width / gridx
-    rangey = img.height / gridy
+    rangex = img.width // gridx
+    rangey = img.height // gridy
     for x in range(rangex):
         for y in range(rangey):
 

@@ -9,29 +9,13 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import MaxPooling2D
 from keras.layers.convolutional import Convolution2D
 from keras import backend as k
+
+
 k.set_image_dim_ordering('th')
-
-input_path = Path('../data/input/source')
-input_good = Path('../data/input/Good')
-input_bad = Path('../data/input/Bad')
-liscense_path = Path('../data/input/liscense')
-
-
-size = 15
-kernel_motion_blur = np.zeros((size, size))
-kernel_motion_blur[int((size-1)/2), :] = np.ones(size)
-kernel_motion_blur = kernel_motion_blur / size
-
-
-def generate_test_image():
-    paths = input_path.glob('**/*.jpg')
-    i = 0
-    for path in paths:
-        img = cv2.imread(str(path))
-        cv2.imwrite(str(input_good / ('%s.jpg' % i)), img)
-        img = cv2.filter2D(img, -1, kernel_motion_blur)
-        cv2.imwrite(str(input_bad / ('%s.jpg' % i)), img)
-        i += 1
+input_path = Path('../../../data/input/License/Test')
+output_path = Path('../../../data/output/cs542/output')
+if not output_path.exists():
+    output_path.mkdir(parents=True)
 
 
 def resize_image(img):
@@ -51,8 +35,8 @@ def split_image(path):
     gridx, gridy = 30, 30
     path = str(path)
     img = Image.open(path)
-    img = focuse_image(img)     # focus img to center
-    rangex, rangey = img.width / gridx, img.height / gridy
+    # img = focuse_image(img)     # focus img to center
+    rangex, rangey = img.width // gridx, img.height // gridy
 
     img_data_list = []
     for x in range(rangex):
@@ -93,25 +77,39 @@ def gen_model():
 def count_array(array):
     positive = array.sum()
     negative = len(array) - positive
+    score = round(float(positive) / (negative + positive), 3)
     print(positive, negative, positive > negative)
+    return score, positive > negative
 
 
 def predict():
     # paths_list = [input_good.glob('**/*.jpg'), input_bad.glob('**/*.jpg')]
-    paths_list = [liscense_path.glob('**/*.jpg')]
+    paths_list = [input_path.glob('**/*.jpg')]
     model = gen_model()
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
-    model.load_weights('motionblur.h5')
+    model.load_weights('../../../data/output/cs542/s_cnn/models/motionblur.h5')
     pprint(model.get_weights()[-1])
+
+    good_output = output_path / 'Good_Images'
+    bad_output = output_path / 'Bad_Images'
+
+    for p in [good_output, bad_output]:
+        if not p.exists():
+            p.mkdir(parents=True)
 
     for paths in paths_list:
         for path in paths:
             img_array = split_image(path)
-            count_array(model.predict_classes(img_array))
+            score, flag = count_array(model.predict_classes(img_array))
             img = Image.open(path)
-            img.show()
-            input('OK?:')
+            # img.show()
+            # input('OK?:')
+            img = img.convert('RGB')
+            if flag:
+                img.save(str(bad_output / ('%s.jpg' % score)))
+            else:
+                img.save(str(good_output / ('%s.jpg' % score)))
 
 
 
