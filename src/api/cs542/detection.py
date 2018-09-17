@@ -3,12 +3,13 @@ from PIL import Image
 from pathlib import Path
 import numpy as np
 from pprint import pprint
-
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import MaxPooling2D
 from keras.layers.convolutional import Convolution2D
 from keras import backend as k
+
+from .train import gen_model
 
 
 k.set_image_dim_ordering('th')
@@ -53,27 +54,6 @@ def split_image(path):
     return img_array
 
 
-def gen_model():
-    input_shape = (3, 30, 30)
-    model = Sequential()
-    model.add(Convolution2D(96, 7,7,input_shape=input_shape))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-    model.add(Convolution2D(256, 5, 5))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.2))
-
-    model.add(Flatten())
-    model.add(Dense(1024))
-    model.add(Activation('relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(2))
-    model.add(Activation('softmax'))
-    return model
-
-
 def count_array(array):
     positive = array.sum()
     negative = len(array) - positive
@@ -83,9 +63,8 @@ def count_array(array):
 
 
 def predict():
-    # paths_list = [input_good.glob('**/*.jpg'), input_bad.glob('**/*.jpg')]
     paths_list = [input_path.glob('**/*.jpg')]
-    model = gen_model()
+    model = gen_model(input_shape=(3, 30, 30))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
     model.load_weights('../../../data/output/cs542/s_cnn/models/motionblur.h5')
@@ -110,7 +89,6 @@ def predict():
                 img.save(str(bad_output / ('%s.jpg' % score)))
             else:
                 img.save(str(good_output / ('%s.jpg' % score)))
-
 
 
 if __name__ == '__main__':

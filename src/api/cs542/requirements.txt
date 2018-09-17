@@ -6,3 +6,4 @@ pathlib
 keras
 matplotlib
 sklearn
+easydict

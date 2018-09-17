@@ -1,12 +1,11 @@
 import numpy as np
 import cv2
-import os.path
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras import callbacks
 from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.optimizers import Adam
+# from keras.optimizers import Adam
 from keras.layers.convolutional import MaxPooling2D
 from keras.layers.convolutional import Convolution2D
 from keras.utils import np_utils
@@ -15,7 +14,7 @@ from pathlib import Path
 from pprint import pprint
 from easydict import EasyDict as edict
 
-from .dataset import init_path
+from dataset import init_path
 
 
 k.set_image_dim_ordering('th')
@@ -74,28 +73,56 @@ def gen_model(input_shape):
     model.add(Dense(num_classes))
     model.add(Activation('softmax'))
 
-    ###########################
-    learning_rate = 0.001
-    adam = Adam(lr=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=["accuracy"])
+    # learning_rate = 0.001
+    # adam = Adam(lr=learning_rate)
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=["accuracy"])
 
     model.summary()
-    model.get_config()
-    model.layers[0].get_config()
-    model.layers[0].input_shape
-    model.layers[0].output_shape
-    model.layers[0].get_weights()
-    np.shape(model.layers[0].get_weights()[0])
-    model.layers[0].trainable
+    # model.get_config()
+    # model.layers[0].get_config()
+    # model.layers[0].input_shape
+    # model.layers[0].output_shape
+    # model.layers[0].get_weights()
+    # np.shape(model.layers[0].get_weights()[0])
+    # model.layers[0].trainable
 
     return model
+
+
+def train(model, x_train, x_test, y_train, y_test, model_direction):
+    log_file = str(Path(model_direction) / 'model_train_new.csv')
+
+    early_stopping = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='min')
+    csv_log = callbacks.CSVLogger(log_file)
+    checkpoint = callbacks.ModelCheckpoint(model_direction, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+    tensorboard_callback = callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, batch_size=32, write_graph=True,
+                                                 write_grads=False, write_images=False, embeddings_freq=0,
+                                                 embeddings_layer_names=None, embeddings_metadata=None)
+    callbacks_list = [csv_log, early_stopping, checkpoint, tensorboard_callback]
+    model.fit(x_train, y_train, batch_size=128, nb_epoch=100, verbose=1, validation_data=(x_test, y_test),
+              callbacks=callbacks_list)
+    model.save(model_direction + "motionblur.h5")
+    return model
+
+
+def test(model, x_test, y_test):
+    score = model.evaluate(x_test, y_test, verbose=0)
+    print('Test Loss:', score[0])
+    print('Test accuracy:', score[1])
+
+    test_image = x_test[0:1]
+    print(test_image.shape)
+
+    print(model.predict(test_image))
+    print(model.predict_classes(test_image))
+    print(y_test[0:1])
 
 
 def main():
     blur_directory = '../../../data/output/cs542/train/blur/'
     clear_directory = '../../../data/output/cs542/train/clear/'
-    filepath = "../../../data/output/cs542/models/"
-    init_path([filepath])
+    model_direction = "../../../data/output/cs542/models/"
+    init_path([model_direction])
 
     img_data_positive, labels_positive = load_dataset(Path(blur_directory), positive_label=True)
     img_data_negative, labels_negative = load_dataset(Path(clear_directory), positive_label=False)
@@ -109,45 +136,10 @@ def main():
             'label': labels_negative
         }
     })
-
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
-
-    model = gen_model()
-    model.fit(x_train, y_train, batch_size=128, nb_epoch=100, verbose=1, validation_data=(x_test, y_test))
-
-    filename = 'model_train_new.csv'
-    csv_log = callbacks.CSVLogger(filename, separator=',', append=False)
-
-    early_stopping = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='min')
-
-    # filepath="Best-weights-my_model-{epoch:03d}-{loss:.4f}-{acc:.4f}.hdf5"
-
-    checkpoint = callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
-
-    # tensorboard callback
-    tensorboard_callback = callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, batch_size=32, write_graph=True,
-                                                 write_grads=False, write_images=False, embeddings_freq=0,
-                                                 embeddings_layer_names=None, embeddings_metadata=None)
-
-    callbacks_list = [csv_log, early_stopping, checkpoint, tensorboard_callback]
-
-    # Evaluating the model
-
-    score = model.evaluate(x_test, y_test, verbose=0)
-    print('Test Loss:', score[0])
-    print('Test accuracy:', score[1])
-
-    test_image = x_test[0:1]
-    print(test_image.shape)
-
-    print(model.predict(test_image))
-    print(model.predict_classes(test_image))
-    print(y_test[0:1])
-
-    # Save our model here
-    file = open(filepath + "motionblur.h5", 'a')
-    model.save(filepath + "motionblur.h5")
-    file.close()
+    model = gen_model(img_data[0].shape)
+    model = train(model, x_train, x_test, y_train, y_test, model_direction)
+    test(model, x_test, y_test)
 
 
 if __name__ == '__main__':

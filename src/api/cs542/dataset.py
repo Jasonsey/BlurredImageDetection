@@ -1,3 +1,4 @@
+# 使用现有的清晰、模糊图片创建训练数据集
 from PIL import Image
 from pathlib import Path
 
@@ -21,7 +22,7 @@ def load_images(ori_path1: Path):
     print('begin loading images')
     for path in paths:
         for image in path.glob('*.jpg'):
-            if image.name == 'Good_License':
+            if path.name == 'Good_License':
                 goods.append(Image.open(image).convert('RGB'))
             else:
                 bads.append(Image.open(image).convert('RGB'))
