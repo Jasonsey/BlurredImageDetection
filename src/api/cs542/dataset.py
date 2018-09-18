@@ -32,8 +32,8 @@ def load_images(ori_path1: Path):
 
 def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blur_path: Path):
     images = [goods, bads]
-    for i in len(images):
-        for ii in len(images[i]):
+    for i in range(len(images)):
+        for ii in range(len(images[i])):
             img = images[i][ii]
             range_x = img.width // grid_x
             range_y = img.height // grid_y
@@ -49,6 +49,7 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
                         path2 = Path(blur_path) / ('blur_' + str(ii) + '_' + str(x) + '_' + str(y) + '.jpg')
                     slice_bit.save(path1, optimize=True, bits=6)
                     slice_bit.save(path2, optimize=True, bits=6)
+        print(ii)
 
 
 def main():

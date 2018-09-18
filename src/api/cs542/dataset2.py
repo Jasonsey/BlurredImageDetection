@@ -8,6 +8,7 @@ from pprint import pprint
 
 grid_x = 30
 grid_y = 30
+grid_w = 20
 DEBUG = False
 
 
@@ -107,6 +108,24 @@ def load_images(ori_path: Path):
     return images
 
 
+def resize(im: Image, size_max=900):
+    """
+    resize image. If the longest side of the image exceeds size_max, the image will be reduced to the longest side
+    without exceeding size_max, otherwise it will not be reduced
+    """
+    width, height = im.width, im.height
+    if width < 900 and height < 900:
+        return im
+    if width > height:
+        ratio = float(width) / size_max
+    else:
+        ratio = float(height) / size_max
+    width, height = int(width * ratio), int(height * ratio)
+    im = im.resize((width, height), Image.ANTIALIAS)
+    return im
+
+
+
 def crop_images(images: list, input_path: Path, clear_path: Path, blur_path: Path):
     """
     Cut the image into small pieces, then randomly process some small pieces into blurred pictures
@@ -137,23 +156,56 @@ def crop_images(images: list, input_path: Path, clear_path: Path, blur_path: Pat
 
 
 def main():
-    ori_path = "../../../data/input/License/Train/Good_License"
+    ori_path = "../../../data/input/License/All_Good_Images"
 
     clear_path = "../../../data/output/cs542/train/clear/"
     blur_path = "../../../data/output/cs542/train/blurred/"
     input_path = "../../../data/output/cs542/train/input_data/"
 
     init_path([clear_path, blur_path, input_path])
-
     images = load_images(Path(ori_path))
     crop_images(images, Path(input_path), Path(clear_path), Path(blur_path))
 
 
 if __name__ == '__main__':
-    main()
+    # main()
     # path = Path('../../../data/input/License/Train/Good_License/23-115730.jpg')
     # blur = Blur(path)
     # blur.var().show()
     # blur.mosaic(box_size=2).motion(degree=6, angle=0).gaussian(radius=1).var().show()
     # blur.motion(degree=1, angle=0).gaussian(radius=4).var().show()
     # gen_parameter()
+    p = "../../../data/input/License/Small_Good_Images"
+    imgs = load_images(Path(p))
+    print(len(imgs))
+    for img in imgs:
+        image = Image.new('RGB', (img.width, img.height), color=(255, 255, 255))
+
+        range_x = img.width // grid_x
+        range_y = img.height // grid_y
+        for x in range(range_x):
+            for y in range(range_y):
+                box = (x * grid_x, y * grid_y, x * grid_x + grid_x, y * grid_y + grid_y)
+
+                if randint(0, 1):
+                    slice_bit = img.crop(box)
+                    image.paste(slice_bit, box)
+                else:
+                    img_copy = img.copy()
+                    big_box = (box[0] - grid_w, box[1] - grid_w, box[2] + grid_w, box[3] + grid_w)
+                    big_slice = img.crop(big_box)
+                    box_size, degree, angle, radius = gen_parameter()
+                    print(box_size, degree, angle, radius)
+                    blur = Blur(big_slice)
+                    big_slice = blur.mosaic(box_size=box_size).motion(degree=degree, angle=angle)\
+                        .gaussian(radius=radius).var()
+                    # big_slice = blur.motion(degree=6, angle=angle)\
+                    #     .var()
+                    # big_slice.show()
+                    slice_bit = big_slice.crop((grid_w, grid_w, grid_w + grid_x, grid_w + grid_y))
+                    image.paste(slice_bit, box)
+        img.show()
+        image.show()
+        input('OK?:')
+
+

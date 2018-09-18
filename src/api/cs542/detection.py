@@ -9,7 +9,7 @@ from keras.layers.convolutional import MaxPooling2D
 from keras.layers.convolutional import Convolution2D
 from keras import backend as k
 
-from .train import gen_model
+from train import gen_model
 
 
 k.set_image_dim_ordering('th')
@@ -27,7 +27,7 @@ def resize_image(img):
 def focuse_image(img):
     w, h = 4, 3
     width, height = img.width, img.height
-    w, h = (width / w, height / h) if width < height else (width / h, height / w)
+    w, h = (width // w, height // h) if width < height else (width // h, height // w)
     box = (w, h, width - w, height - h)
     return img.crop(box)
 
@@ -67,7 +67,7 @@ def predict():
     model = gen_model(input_shape=(3, 30, 30))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
-    model.load_weights('../../../data/output/cs542/s_cnn/models/motionblur.h5')
+    model.load_weights('../../../data/output/cs542/models/latest_model.h5')
     pprint(model.get_weights()[-1])
 
     good_output = output_path / 'Good_Images'
@@ -92,5 +92,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    # generate_test_image()
     predict()

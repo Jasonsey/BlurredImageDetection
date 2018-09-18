@@ -85,23 +85,26 @@ def gen_model(input_shape):
     # model.layers[0].get_weights()
     # np.shape(model.layers[0].get_weights()[0])
     # model.layers[0].trainable
-
     return model
 
 
 def train(model, x_train, x_test, y_train, y_test, model_direction):
-    log_file = str(Path(model_direction) / 'model_train_new.csv')
+    csv_log_file = str(Path(model_direction).parent / 'log' / 'model_train_log.csv')
+    tensorboard_log_direction = str(Path(model_direction).parent / 'log')
+    ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_loss:.2f}.h5')
+    model_file = str(Path(model_direction) / 'latest_model.h5')
 
-    early_stopping = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='min')
-    csv_log = callbacks.CSVLogger(log_file)
-    checkpoint = callbacks.ModelCheckpoint(model_direction, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
-    tensorboard_callback = callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, batch_size=32, write_graph=True,
-                                                 write_grads=False, write_images=False, embeddings_freq=0,
-                                                 embeddings_layer_names=None, embeddings_metadata=None)
+    early_stopping = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=0, mode='min')
+    csv_log = callbacks.CSVLogger(csv_log_file)
+    checkpoint = callbacks.ModelCheckpoint(ckpt_file, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+    tensorboard_callback = callbacks.TensorBoard(log_dir=tensorboard_log_direction, histogram_freq=0, batch_size=32,
+                                                 write_graph=True, write_grads=False, write_images=False,
+                                                 embeddings_freq=0, embeddings_layer_names=None,
+                                                 embeddings_metadata=None)
     callbacks_list = [csv_log, early_stopping, checkpoint, tensorboard_callback]
-    model.fit(x_train, y_train, batch_size=128, nb_epoch=100, verbose=1, validation_data=(x_test, y_test),
+    model.fit(x_train, y_train, batch_size=256, epochs=100, verbose=1, validation_data=(x_test, y_test),
               callbacks=callbacks_list)
-    model.save(model_direction + "motionblur.h5")
+    model.save(model_file)
     return model
 
 
@@ -119,7 +122,7 @@ def test(model, x_test, y_test):
 
 
 def main():
-    blur_directory = '../../../data/output/cs542/train/blur/'
+    blur_directory = '../../../data/output/cs542/train/blurred/'
     clear_directory = '../../../data/output/cs542/train/clear/'
     model_direction = "../../../data/output/cs542/models/"
     init_path([model_direction])
@@ -133,7 +136,7 @@ def main():
         },
         'negative': {
             'img_data': img_data_negative,
-            'label': labels_negative
+            'labels': labels_negative
         }
     })
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
