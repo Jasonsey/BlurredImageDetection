@@ -102,7 +102,7 @@ def train(model, x_train, x_test, y_train, y_test, model_direction):
                                                  embeddings_freq=0, embeddings_layer_names=None,
                                                  embeddings_metadata=None)
     callbacks_list = [csv_log, early_stopping, checkpoint, tensorboard_callback]
-    model.fit(x_train, y_train, batch_size=256, epochs=100, verbose=1, validation_data=(x_test, y_test),
+    model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_test, y_test),
               callbacks=callbacks_list)
     model.save(model_file)
     return model
