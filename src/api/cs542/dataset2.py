@@ -131,7 +131,7 @@ def load_images(ori_path: Path):
     return images
 
 
-def resize(im: Image, size_max=900):
+def resize(im: Image, size_max=1200):
     """
     resize image. If the longest side of the image exceeds size_max, the image will be reduced to the longest side
     without exceeding size_max, otherwise it will not be reduced

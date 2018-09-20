@@ -1,7 +1,7 @@
 # 使用现有的清晰、模糊图片创建训练数据集
 from PIL import Image
 from pathlib import Path
-
+from dataset2 import resize
 
 grid_x = 30
 grid_y = 30
@@ -35,6 +35,7 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
     for i in range(len(images)):
         for ii in range(len(images[i])):
             img = images[i][ii]
+            img = resize(img)
             range_x = img.width // grid_x
             range_y = img.height // grid_y
             for x in range(range_x):
@@ -50,6 +51,7 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
                     slice_bit.save(path1, optimize=True, bits=6)
                     slice_bit.save(path2, optimize=True, bits=6)
             print(ii)
+    print('All Done !')
 
 
 def main():

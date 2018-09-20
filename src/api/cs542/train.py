@@ -23,12 +23,18 @@ np.random.seed(seed)
 num_classes = 2
 
 
-def load_dataset(path: Path, positive_label: bool=True):
+def load_dataset(path: Path, positive_label: bool=True, length: int=0):
     img_data_list = []
+    list_append = img_data_list.append
+    i = 0
     for img_path in path.glob('*.jpg'):
+        i += 1
+        if length and i > length:
+            break
         input_img = cv2.imread(str(img_path))
         input_img = np.swapaxes(input_img, 0, 2)
-        img_data_list.append(input_img)
+        list_append(input_img)
+
     img_data = np.array(img_data_list, dtype=np.float32)
     img_data /= 255
 
@@ -52,10 +58,23 @@ def prepare_train_data(dataset_dict: edict):
     return x_train, x_test, y_train, y_test, img_data
 
 
+def precision(y_true, y_pred):
+    true_positives = k.sum(k.round(k.clip(y_true * y_pred, 0, 1)))
+    predicted_positives = k.sum(k.round(k.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + k.epsilon())
+    return precision
+
+
+def recall(y_true, y_pred):
+    true_positives = k.sum(k.round(k.clip(y_true * y_pred, 0, 1)))
+    possible_positives = k.sum(k.round(k.clip(y_true, 0, 1)))
+    recall = true_positives / (possible_positives + k.epsilon())
+    return recall
+
+
 def gen_model(input_shape):
     # input_shape = img_data[0].shape
     # print(input_shape, 'input_shape')
-
     model = Sequential()
     model.add(Convolution2D(96, 7, 7, input_shape=input_shape))
     model.add(Activation('relu'))
@@ -75,7 +94,7 @@ def gen_model(input_shape):
 
     # learning_rate = 0.001
     # adam = Adam(lr=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=["accuracy"])
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=["accuracy", precision, recall])
 
     model.summary()
     # model.get_config()
@@ -91,12 +110,12 @@ def gen_model(input_shape):
 def train(model, x_train, x_test, y_train, y_test, model_direction):
     csv_log_file = str(Path(model_direction).parent / 'log' / 'model_train_log.csv')
     tensorboard_log_direction = str(Path(model_direction).parent / 'log')
-    ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_loss:.2f}.h5')
+    ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_precision:.2f}.h5')
     model_file = str(Path(model_direction) / 'latest_model.h5')
 
-    early_stopping = callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=0, mode='min')
+    early_stopping = callbacks.EarlyStopping(monitor='val_precision', min_delta=0, patience=20, verbose=0, mode='max')
     csv_log = callbacks.CSVLogger(csv_log_file)
-    checkpoint = callbacks.ModelCheckpoint(ckpt_file, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+    checkpoint = callbacks.ModelCheckpoint(ckpt_file, monitor='val_precision', verbose=1, save_best_only=True, mode='max')
     tensorboard_callback = callbacks.TensorBoard(log_dir=tensorboard_log_direction, histogram_freq=0, batch_size=32,
                                                  write_graph=True, write_grads=False, write_images=False,
                                                  embeddings_freq=0, embeddings_layer_names=None,
@@ -128,7 +147,8 @@ def main():
     init_path([model_direction])
 
     img_data_positive, labels_positive = load_dataset(Path(blur_directory), positive_label=True)
-    img_data_negative, labels_negative = load_dataset(Path(clear_directory), positive_label=False)
+    img_data_negative, labels_negative = load_dataset(Path(clear_directory), positive_label=False,
+                                                      length=len(labels_positive))
     dataset_dict = edict({
         'positive': {
             'img_data': img_data_positive,
