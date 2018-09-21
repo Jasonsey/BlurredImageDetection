@@ -9,6 +9,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="GPU2-IN">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/root/code/Blurred_Image_Detection" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
     </serverData>
   </component>
 </project>

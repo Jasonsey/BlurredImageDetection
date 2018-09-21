@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from keras.optimizers import Adam
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
@@ -92,9 +93,9 @@ def gen_model(input_shape):
     model.add(Dense(num_classes))
     model.add(Activation('softmax'))
 
-    # learning_rate = 0.001
-    # adam = Adam(lr=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=["accuracy", precision, recall])
+    learning_rate = 0.0001
+    adam = Adam(lr=learning_rate)
+    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=["accuracy", precision, recall])
 
     model.summary()
     # model.get_config()
@@ -107,13 +108,13 @@ def gen_model(input_shape):
     return model
 
 
-def train(model, x_train, x_test, y_train, y_test, model_direction):
+def train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_model=None):
     csv_log_file = str(Path(model_direction).parent / 'log' / 'model_train_log.csv')
     tensorboard_log_direction = str(Path(model_direction).parent / 'log')
     ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_precision:.2f}.h5')
     model_file = str(Path(model_direction) / 'latest_model.h5')
 
-    early_stopping = callbacks.EarlyStopping(monitor='val_precision', min_delta=0, patience=20, verbose=0, mode='max')
+    early_stopping = callbacks.EarlyStopping(monitor='val_precision', min_delta=0.0001, patience=50, verbose=0, mode='max')
     csv_log = callbacks.CSVLogger(csv_log_file)
     checkpoint = callbacks.ModelCheckpoint(ckpt_file, monitor='val_precision', verbose=1, save_best_only=True, mode='max')
     tensorboard_callback = callbacks.TensorBoard(log_dir=tensorboard_log_direction, histogram_freq=0, batch_size=32,
@@ -121,7 +122,10 @@ def train(model, x_train, x_test, y_train, y_test, model_direction):
                                                  embeddings_freq=0, embeddings_layer_names=None,
                                                  embeddings_metadata=None)
     callbacks_list = [csv_log, early_stopping, checkpoint, tensorboard_callback]
-    model.fit(x_train, y_train, batch_size=128, epochs=100, verbose=1, validation_data=(x_test, y_test),
+    if pretrain_model:
+        model.load_weights(pretrain_model)
+    pprint(model.get_weights()[-1])
+    model.fit(x_train, y_train, batch_size=128, epochs=300, verbose=1, validation_data=(x_test, y_test),
               callbacks=callbacks_list)
     model.save(model_file)
     return model
@@ -144,11 +148,11 @@ def main():
     blur_directory = '../../../data/output/cs542/train/blurred/'
     clear_directory = '../../../data/output/cs542/train/clear/'
     model_direction = "../../../data/output/cs542/models/"
+    pretrain_model = None
     init_path([model_direction])
 
     img_data_positive, labels_positive = load_dataset(Path(blur_directory), positive_label=True)
-    img_data_negative, labels_negative = load_dataset(Path(clear_directory), positive_label=False,
-                                                      length=len(labels_positive))
+    img_data_negative, labels_negative = load_dataset(Path(clear_directory), positive_label=False)
     dataset_dict = edict({
         'positive': {
             'img_data': img_data_positive,
@@ -161,7 +165,7 @@ def main():
     })
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
     model = gen_model(img_data[0].shape)
-    model = train(model, x_train, x_test, y_train, y_test, model_direction)
+    model = train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_model)
     test(model, x_test, y_test)
 
 

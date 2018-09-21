@@ -48,14 +48,14 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
                     else:
                         path1 = Path(input_path) / ('blur_' + str(ii) + '_' + str(x) + '_' + str(y) + '.jpg')
                         path2 = Path(blur_path) / ('blur_' + str(ii) + '_' + str(x) + '_' + str(y) + '.jpg')
-                    slice_bit.save(path1, optimize=True, bits=6)
-                    slice_bit.save(path2, optimize=True, bits=6)
+                    slice_bit.save(path1, optimize=True)
+                    slice_bit.save(path2, optimize=True)
             print(ii)
     print('All Done !')
 
 
 def main():
-    ori_path = "../../../data/input/License/Train2"
+    ori_path = "../../../data/input/License/Train"
 
     clear_path = "../../../data/output/cs542/train/clear/"
     blur_path = "../../../data/output/cs542/train/blurred/"

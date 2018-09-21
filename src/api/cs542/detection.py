@@ -10,7 +10,7 @@ from dataset2 import resize
 
 
 k.set_image_dim_ordering('th')
-input_path = Path('../../../data/input/License/Test2')
+input_path = Path('../../../data/input/License/Test')
 output_path = Path('../../../data/output/cs542/output')
 if not output_path.exists():
     output_path.mkdir(parents=True)
@@ -71,7 +71,7 @@ def predict():
     model = gen_model(input_shape=(3, 30, 30))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
-    model.load_weights('../../../data/output/cs542/models/ckpt_model.98-0.44.h5')
+    model.load_weights('../../../data/output/cs542/models/ckpt_model.172-0.90.h5')
     # model.load_weights('../../../data/output/cs542/models/latest_model.h5')
     pprint(model.get_weights()[-1])
 
