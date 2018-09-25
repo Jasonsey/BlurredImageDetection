@@ -30,11 +30,20 @@ def load_images(ori_path1: Path):
     return goods, bads
 
 
+def focuse_image(img):
+    w, h = 4, 3
+    width, height = img.width, img.height
+    w, h = (width // w, height // h) if width < height else (width // h, height // w)
+    box = (w, h, width - w, height - h)
+    return img.crop(box)
+
+
 def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blur_path: Path):
     images = [goods, bads]
     for i in range(len(images)):
         for ii in range(len(images[i])):
             img = images[i][ii]
+            img = focuse_image(img)
             img = resize(img)
             range_x = img.width // grid_x
             range_y = img.height // grid_y
@@ -67,5 +76,16 @@ def main():
     crop_images(good_img, bad_img, Path(input_path), Path(clear_path), Path(blur_path))
 
 
+def debug():
+    ori_path = "../../../data/input/License/Train"
+    good_img, bad_img = load_images(Path(ori_path))
+    for img in bad_img:
+        im = focuse_image(img)
+        img.show()
+        im.show()
+        input('....')
+
+
 if __name__ == '__main__':
     main()
+    # debug()

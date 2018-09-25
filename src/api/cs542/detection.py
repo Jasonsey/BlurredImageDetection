@@ -34,7 +34,7 @@ def split_image(path):
     path = str(path)
     img = Image.open(path)
     img = resize(img)
-    # img = focuse_image(img)     # focus img to center
+    img = focuse_image(img)     # focus img to center
     rangex, rangey = img.width // gridx, img.height // gridy
 
     img_data_list = []
@@ -71,7 +71,7 @@ def predict():
     model = gen_model(input_shape=(3, 30, 30))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
-    model.load_weights('../../../data/output/cs542/models/ckpt_model.172-0.90.h5')
+    model.load_weights('../../../data/output/cs542/models/ckpt_model.99-0.91.h5')
     # model.load_weights('../../../data/output/cs542/models/latest_model.h5')
     pprint(model.get_weights()[-1])
 
