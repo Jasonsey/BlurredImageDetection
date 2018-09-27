@@ -66,12 +66,26 @@ def count_array(array):
     return score, score > 0.5
 
 
+def best_model(model_path: Path):
+    best_precision = 0
+    best_path = 'latest_model.h5'
+    for path in model_path.glob('*.h5'):
+        if 'ckpt_model' in path.stem:
+            # print(path.stem.split('-'))
+            val_precision = float(path.stem.split('-')[1])
+            if val_precision > best_precision:
+                best_precision = val_precision
+                best_path = path
+    return str(best_path)
+
+
 def predict():
     paths_list = [input_path.glob('**/*.jpg')]
     model = gen_model(input_shape=(3, 30, 30))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
-    model.load_weights('../../../data/output/cs542/models/ckpt_model.99-0.91.h5')
+    model_path = best_model(Path('../../../data/output/cs542/models'))
+    model.load_weights(model_path)
     # model.load_weights('../../../data/output/cs542/models/latest_model.h5')
     pprint(model.get_weights()[-1])
 
@@ -93,7 +107,7 @@ def predict():
             if flag:
                 img.save(str(bad_output / ('{:.4f}.jpg'.format(score))))
             else:
-                img.save(str(good_output / ('{:.3f}.jpg'.format(score))))
+                img.save(str(good_output / ('{:.4f}.jpg'.format(score))))
 
 
 if __name__ == '__main__':

@@ -6,11 +6,12 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras import callbacks
 from keras.layers.core import Dense, Dropout, Activation, Flatten
-# from keras.optimizers import Adam
 from keras.layers.convolutional import MaxPooling2D
 from keras.layers.convolutional import Convolution2D
 from keras.utils import np_utils
 from keras import backend as k
+from keras.callbacks import Callback
+from sklearn.metrics import f1_score, precision_score, recall_score, classification_report
 from pathlib import Path
 from pprint import pprint
 from easydict import EasyDict as edict
@@ -59,23 +60,51 @@ def prepare_train_data(dataset_dict: edict):
     return x_train, x_test, y_train, y_test, img_data
 
 
-def precision(y_true, y_pred):
-    true_positives = k.sum(k.round(k.clip(y_true * y_pred, 0, 1)))
-    predicted_positives = k.sum(k.round(k.clip(y_pred, 0, 1)))
-    precision = true_positives / (predicted_positives + k.epsilon())
-    return precision
+class MetricCallback(Callback):
+    def __init__(self, predict_batch_size=512, include_on_batch=False):
+        super(MetricCallback, self).__init__()
+        self.predict_batch_size = predict_batch_size
+        self.include_on_batch = include_on_batch
 
+    def on_batch_end(self, batch, logs=None):
+        if self.include_on_batch:
+            logs['val_recall'] = np.float32('-inf')
+            logs['val_precision'] = np.float32('-inf')
+            logs['val_f1'] = np.float32('-inf')
+            if self.validation_data:
+                y_true = np.argmax(self.validation_data[1], axis=1)
+                y_pred = np.argmax(self.model.predict(self.validation_data[0], batch_size=self.predict_batch_size),
+                                   axis=1)
+                self.set_scores(y_true, y_pred, logs)
 
-def recall(y_true, y_pred):
-    true_positives = k.sum(k.round(k.clip(y_true * y_pred, 0, 1)))
-    possible_positives = k.sum(k.round(k.clip(y_true, 0, 1)))
-    recall = true_positives / (possible_positives + k.epsilon())
-    return recall
+    def on_train_begin(self, logs=None):
+        if 'val_recall' not in self.params['metrics']:
+            self.params['metrics'].append('val_recall')
+        if 'val_precision' not in self.params['metrics']:
+            self.params['metrics'].append('val_precision')
+        if 'val_f1' not in self.params['metrics']:
+            self.params['metrics'].append('val_f1')
+        if 'val_auc' not in self.params['metrics']:
+            self.params['metrics'].append('val_auc')
+
+    def on_epoch_end(self, epoch, logs=None):
+        logs['val_recall'] = np.float32('-inf')
+        logs['val_precision'] = np.float32('-inf')
+        logs['val_f1'] = np.float32('-inf')
+        if self.validation_data:
+            y_true = np.argmax(self.validation_data[1], axis=1)
+            y_pred = np.argmax(self.model.predict(self.validation_data[0], batch_size=self.predict_batch_size), axis=1)
+            self.set_scores(y_true, y_pred, logs)
+            print(classification_report(y_true, y_pred, target_names=['清晰', '模糊']))
+
+    @staticmethod
+    def set_scores(y_true, y_pred, logs=None):
+        logs['val_recall'] = recall_score(y_true, y_pred)
+        logs['val_precision'] = precision_score(y_true, y_pred)
+        logs['val_f1'] = f1_score(y_true, y_pred)
 
 
 def gen_model(input_shape):
-    # input_shape = img_data[0].shape
-    # print(input_shape, 'input_shape')
     model = Sequential()
     model.add(Convolution2D(96, 7, 7, input_shape=input_shape))
     model.add(Activation('relu'))
@@ -95,37 +124,27 @@ def gen_model(input_shape):
 
     learning_rate = 0.0001
     adam = Adam(lr=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=["accuracy", precision, recall])
+    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=["accuracy"])
 
     model.summary()
-    # model.get_config()
-    # model.layers[0].get_config()
-    # model.layers[0].input_shape
-    # model.layers[0].output_shape
-    # model.layers[0].get_weights()
-    # np.shape(model.layers[0].get_weights()[0])
-    # model.layers[0].trainable
     return model
 
 
 def train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_model=None):
     csv_log_file = str(Path(model_direction).parent / 'log' / 'model_train_log.csv')
     tensorboard_log_direction = str(Path(model_direction).parent / 'log')
-    ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_precision:.2f}.h5')
+    ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_precision:.4f}.h5')
     model_file = str(Path(model_direction) / 'latest_model.h5')
 
     early_stopping = callbacks.EarlyStopping(monitor='val_precision', min_delta=0.0001, patience=50, verbose=0, mode='max')
     csv_log = callbacks.CSVLogger(csv_log_file)
     checkpoint = callbacks.ModelCheckpoint(ckpt_file, monitor='val_precision', verbose=1, save_best_only=True, mode='max')
-    tensorboard_callback = callbacks.TensorBoard(log_dir=tensorboard_log_direction, histogram_freq=0, batch_size=32,
-                                                 write_graph=True, write_grads=False, write_images=False,
-                                                 embeddings_freq=0, embeddings_layer_names=None,
-                                                 embeddings_metadata=None)
-    callbacks_list = [csv_log, early_stopping, checkpoint, tensorboard_callback]
+    tensorboard_callback = callbacks.TensorBoard(log_dir=tensorboard_log_direction, batch_size=32)
+    callbacks_list = [MetricCallback(), csv_log, early_stopping, checkpoint, tensorboard_callback]
     if pretrain_model:
         model.load_weights(pretrain_model)
     pprint(model.get_weights()[-1])
-    model.fit(x_train, y_train, batch_size=128, epochs=300, verbose=1, validation_data=(x_test, y_test),
+    model.fit(x_train, y_train, batch_size=256, epochs=200, verbose=1, validation_data=(x_test, y_test),
               callbacks=callbacks_list)
     model.save(model_file)
     return model
