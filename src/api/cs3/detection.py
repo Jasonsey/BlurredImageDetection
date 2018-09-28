@@ -92,9 +92,8 @@ def predict():
 
     good_output = output_path / 'Good_Images'
     bad_output = output_path / 'Bad_Images'
-    re_output = output_path / 'Re_Images'
 
-    for p in [good_output, bad_output, re_output]:
+    for p in [good_output, bad_output]:
         if not p.exists():
             p.mkdir(parents=True)
 
@@ -105,15 +104,12 @@ def predict():
             img = Image.open(path)
             img = img.convert('RGB')
             df = DataFrame(data)
-            if path.parent.name == 'Good':
-                img.save(str(good_output / ('{:.4f}.jpg'.format(score))))
-                df.to_csv(str(good_output / ('{:.4f}.csv'.format(score))))
-            elif path.parent.name == 'Bad':
+            if flag:
                 img.save(str(bad_output / ('{:.4f}.jpg'.format(score))))
-                df.to_csv(str(bad_output / ('{:.4f}.csv'.format(score))))
+                df.to_csv(str(bad_output / ('{:.4f}.jpg'.format(score))))
             else:
-                img.save(str(re_output / ('{:.4f}.jpg'.format(score))))
-                df.to_csv(str(re_output / ('{:.4f}.csv'.format(score))))
+                img.save(str(good_output / ('{:.4f}.jpg'.format(score))))
+                df.to_csv(str(good_output / ('{:.4f}.jpg'.format(score))))
 
 
 if __name__ == '__main__':

@@ -5,10 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3182a79f-2929-4b18-a85e-751c36659cb6" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webServers.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webServers.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/cs3/Makefile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/cs3/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/cs3/check_dataset.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/cs3/dataset.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/cs3/detection.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/cs3/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/api/cs3/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Blurred_Image_Detection.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Blurred_Image_Detection.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/cs542/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/cs542/dataset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/api/cs542/detection.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/cs542/detection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/api/cs542/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/cs542/train.py" afterDir="false" />
     </list>
@@ -23,6 +28,7 @@
     <SUITE FILE_PATH="coverage/Blurred_Image_Detection$detection.coverage" NAME="detection Coverage Results" MODIFIED="1537251130413" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/api/cs542" />
     <SUITE FILE_PATH="coverage/Blurred_Image_Detection$dataset.coverage" NAME="dataset Coverage Results" MODIFIED="1537231881519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/api/cs542" />
     <SUITE FILE_PATH="coverage/Blurred_Image_Detection$dataset2.coverage" NAME="dataset2 Coverage Results" MODIFIED="1537337187052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/api/cs542" />
+    <SUITE FILE_PATH="coverage/Blurred_Image_Detection$cal_best_gate.coverage" NAME="cal_best_gate Coverage Results" MODIFIED="1538128302301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/api/cs542" />
     <SUITE FILE_PATH="coverage/Blurred_Image_Detection$main.coverage" NAME="main Coverage Results" MODIFIED="1536665952197" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Blurred_Image_Detection$test.coverage" NAME="test Coverage Results" MODIFIED="1536902601922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/api/cs542" />
     <SUITE FILE_PATH="coverage/Blurred_Image_Detection$trainingdatacreate.coverage" NAME="trainingdatacreate Coverage Results" MODIFIED="1537231751391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/api/cs542" />
@@ -31,33 +37,36 @@
     <session id="177980645">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="6" />
+          <entry key="project.closed" value="7" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.11" value="1" />
-          <entry key="project.open.time.4" value="2" />
+          <entry key="project.open.time.4" value="3" />
           <entry key="project.open.time.41" value="1" />
           <entry key="project.open.time.5" value="1" />
           <entry key="project.open.time.6" value="2" />
           <entry key="project.open.time.86" value="1" />
-          <entry key="project.opened" value="14" />
+          <entry key="project.opened" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
+          <entry key="Makefile" value="1" />
+          <entry key="csv" value="1" />
           <entry key="gitignore" value="1" />
           <entry key="gitkeep" value="2" />
           <entry key="jpg" value="2" />
-          <entry key="py" value="75" />
+          <entry key="py" value="99" />
           <entry key="txt" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Image" value="2" />
-          <entry key="PLAIN_TEXT" value="9" />
-          <entry key="Python" value="74" />
+          <entry key="Makefile" value="1" />
+          <entry key="PLAIN_TEXT" value="10" />
+          <entry key="Python" value="98" />
           <entry key="UML" value="1" />
         </counts>
       </usages-collector>
@@ -65,14 +74,14 @@
         <counts>
           <entry key="dummy" value="13" />
           <entry key="gitignore" value="68" />
-          <entry key="py" value="19077" />
-          <entry key="txt" value="440" />
+          <entry key="py" value="23892" />
+          <entry key="txt" value="645" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="521" />
-          <entry key="Python" value="19077" />
+          <entry key="PLAIN_TEXT" value="726" />
+          <entry key="Python" value="23892" />
         </counts>
       </usages-collector>
     </session>
@@ -80,38 +89,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/api/cs542/dataset.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="57" column="30" selection-start-line="57" selection-start-column="30" selection-end-line="57" selection-end-column="30" />
-              <folding>
-                <element signature="e#22#43#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/api/cs542/dataset2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3354">
-              <caret line="134" column="7" selection-start-line="134" selection-start-column="7" selection-end-line="134" selection-end-column="7" />
-              <folding>
-                <element signature="e#19#64#0" expanded="true" />
-                <marker date="1537427615621" expanded="true" signature="1757:2201" ph="..." />
-                <marker date="1537427615621" expanded="true" signature="4017:4020" ph="..." />
-                <marker date="1537427615621" expanded="true" signature="4294:4829" ph="..." />
-                <marker date="1537427615621" expanded="true" signature="6673:8712" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/api/cs542/detection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="312">
-              <caret line="12" column="17" lean-forward="true" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
+            <state relative-caret-position="226">
+              <caret line="14" column="55" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="55" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -120,23 +101,15 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/api/cs542/train.py">
+        <entry file="file://$PROJECT_DIR$/src/api/cs542/cal_best_gate.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="538">
-              <caret line="121" column="26" lean-forward="true" selection-start-line="121" selection-start-column="26" selection-end-line="121" selection-end-column="26" />
+              <caret line="58" lean-forward="true" selection-start-line="58" selection-end-line="58" />
               <folding>
-                <element signature="e#0#18#0" expanded="true" />
-                <marker date="1537519551831" expanded="true" signature="5083:5376" ph="..." />
+                <element signature="e#0#24#0" expanded="true" />
+                <marker date="1538128858524" expanded="true" signature="384:888" ph="..." />
+                <marker date="1538128858524" expanded="true" signature="899:900" ph="..." />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/keras/optimizers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="11492">
-              <caret line="453" column="36" selection-start-line="453" selection-start-column="31" selection-end-line="453" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -155,6 +128,13 @@
       <find>DEBUG</find>
       <find>kernel_motion_blur</find>
       <find>resize</find>
+      <find>swapaxes</find>
+      <find>precision</find>
+      <find>self.monitor</find>
+      <find>y_test</find>
+      <find>summa</find>
+      <find>summary_value</find>
+      <find>pos_label</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/src/api/cs542</dir>
@@ -177,8 +157,12 @@
         <option value="$PROJECT_DIR$/src/api/cs542/dataset2.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/api/cs542/dataset.py" />
-        <option value="$PROJECT_DIR$/src/api/cs542/detection.py" />
         <option value="$PROJECT_DIR$/src/api/cs542/train.py" />
+        <option value="$PROJECT_DIR$/src/api/cs3/dataset.py" />
+        <option value="$PROJECT_DIR$/src/api/cs3/train.py" />
+        <option value="$PROJECT_DIR$/src/api/cs3/detection.py" />
+        <option value="$PROJECT_DIR$/src/api/cs542/detection.py" />
+        <option value="$PROJECT_DIR$/src/api/cs542/cal_best_gate.py" />
       </list>
     </option>
   </component>
@@ -215,12 +199,54 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="Blurred_Image_Detection" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="Blurred_Image_Detection" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="Blurred_Image_Detection" type="b2602c69:ProjectViewProjectNode" />
               <item name="Blurred_Image_Detection" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Blurred_Image_Detection" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Blurred_Image_Detection" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Blurred_Image_Detection" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Blurred_Image_Detection" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="output" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Blurred_Image_Detection" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Blurred_Image_Detection" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="output" type="462c0819:PsiDirectoryNode" />
+              <item name="cs542" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Blurred_Image_Detection" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Blurred_Image_Detection" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="output" type="462c0819:PsiDirectoryNode" />
+              <item name="cs542" type="462c0819:PsiDirectoryNode" />
+              <item name="output" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Blurred_Image_Detection" type="b2602c69:ProjectViewProjectNode" />
@@ -244,22 +270,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="Blurred_Image_Detection" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="Blurred_Image_Detection" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -267,10 +277,11 @@
     <property name="last_opened_file_path" value="$USER_HOME$/Data/Documents/NoteBook" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/api" />
       <recent name="$PROJECT_DIR$/src/api/cs542" />
     </key>
   </component>
@@ -286,7 +297,29 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.dataset2">
+  <component name="RunManager" selected="Python.cal_best_gate">
+    <configuration name="cal_best_gate" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Blurred_Image_Detection" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/api/cs542" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/api/cs542/cal_best_gate.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="dataset" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Blurred_Image_Detection" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -357,9 +390,11 @@
       <item itemvalue="Python.dataset" />
       <item itemvalue="Python.detection" />
       <item itemvalue="Python.dataset2" />
+      <item itemvalue="Python.cal_best_gate" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.cal_best_gate" />
         <item itemvalue="Python.dataset2" />
         <item itemvalue="Python.detection" />
         <item itemvalue="Python.dataset" />
@@ -405,19 +440,32 @@
       <option name="project" value="LOCAL" />
       <updated>1537445443590</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="[update]调整算法只识别图片中心部分的模糊程度">
+      <created>1537872611843</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1537872611843</updated>
+    </task>
+    <task id="LOCAL-00006" summary="[update]修复precision recall 评分机制&#10;&#10;1. 预测时自动获取最佳模型进行预测&#10;2. 修复precision、recall计算，增加f1值计算&#10;3. 在每个epoch末尾答应当前测试集合的分类报告&#10;4. 删除部分不再使用的代码">
+      <created>1538043497463</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1538043497464</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16260745" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16905445" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32903227" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.28387097" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.34709677" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -426,7 +474,7 @@
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32903227" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.75225806" />
-      <window_info anchor="bottom" id="Python Console" order="11" />
+      <window_info anchor="bottom" id="Python Console" order="11" weight="0.32903227" />
       <window_info anchor="bottom" id="File Transfer" order="12" weight="0.2670968" />
       <window_info anchor="bottom" id="Database Changes" order="13" show_stripe_button="false" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -497,23 +545,10 @@
     <MESSAGE value="[update]模糊图片生成算法需要改进，出现黑色图块、颜色黄色图块" />
     <MESSAGE value="[update]改进图片生成算法：&#10;&#10;1. 修复图片生成时出现黑色方块、黄色方块;&#10;2. 减小batch size，使和原始算法的size一致;" />
     <MESSAGE value="[update]做如下优化：&#10;1. 添加检查训练样本代码;&#10;2. 网络训练和识别样本都默认调整尺寸;&#10;3. 网络识别代码从统计1个数调整为统计网络所有输出的平均值;&#10;4. 网络训练添加评估指标：精确率、召回率;" />
-    <option name="LAST_COMMIT_MESSAGE" value="[update]做如下优化：&#10;1. 添加检查训练样本代码;&#10;2. 网络训练和识别样本都默认调整尺寸;&#10;3. 网络识别代码从统计1个数调整为统计网络所有输出的平均值;&#10;4. 网络训练添加评估指标：精确率、召回率;" />
+    <MESSAGE value="[update]修复precision recall 评分机制&#10;&#10;1. 预测时自动获取最佳模型进行预测&#10;2. 修复precision、recall计算，增加f1值计算&#10;3. 在每个epoch末尾答应当前测试集合的分类报告&#10;4. 删除部分不再使用的代码" />
+    <option name="LAST_COMMIT_MESSAGE" value="[update]修复precision recall 评分机制&#10;&#10;1. 预测时自动获取最佳模型进行预测&#10;2. 修复precision、recall计算，增加f1值计算&#10;3. 在每个epoch末尾答应当前测试集合的分类报告&#10;4. 删除部分不再使用的代码" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///run/media/tiny/Data/Project/20180911 Blurred_Image_Detection/Code/Blurred_Image_Detection/src/api/cv2/detection.py" />
-    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/-2102330631/builtins.py" />
-    <entry file="file://$PROJECT_DIR$/src/api/cv2/detection.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-58">
-          <caret line="5" column="3" lean-forward="true" selection-start-line="5" selection-start-column="3" selection-end-line="5" selection-end-column="3" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/lib64/python3.7/pathlib.py" />
-    <entry file="file://$PROJECT_DIR$/data/input/License/Bad_License/6.jpg" />
     <entry file="file://$PROJECT_DIR$/data/input/License/Good_License/23-10560.jpg" />
     <entry file="file://$PROJECT_DIR$/src/main.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -566,13 +601,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="94" column="8" selection-start-line="94" selection-start-column="8" selection-end-line="94" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/numpy/core/fromnumeric.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="1655" column="4" selection-start-line="1655" selection-start-column="4" selection-end-line="1655" selection-end-column="4" />
         </state>
       </provider>
     </entry>
@@ -657,13 +685,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/keras/utils/np_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="248">
@@ -686,19 +707,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/keras/callbacks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="994">
-          <caret line="696" column="27" selection-start-line="696" selection-start-column="17" selection-end-line="696" selection-end-column="27" />
-          <folding>
-            <element signature="e#76#114#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/api/cs542/dataset2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3354">
+        <state relative-caret-position="668">
           <caret line="134" column="7" selection-start-line="134" selection-start-column="7" selection-end-line="134" selection-end-column="7" />
           <folding>
             <element signature="e#19#64#0" expanded="true" />
@@ -710,40 +721,157 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs542/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/keras/optimizers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11492">
+        <state relative-caret-position="668">
           <caret line="453" column="36" selection-start-line="453" selection-start-column="31" selection-end-line="453" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/-1705105791/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-64">
+          <caret line="5238" column="8" selection-start-line="5238" selection-start-column="8" selection-end-line="5238" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.2/system/python_stubs/-1705105791/numpy/core/multiarray.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="4540" column="28" selection-start-line="4540" selection-start-column="20" selection-end-line="4540" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6">
+          <caret line="2733" column="4" selection-start-line="2733" selection-start-column="4" selection-end-line="2733" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/keras/utils/np_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/keras/callbacks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="694" column="8" selection-start-line="694" selection-start-column="8" selection-end-line="694" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs542/dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs542/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3822">
+          <caret line="147" column="46" selection-start-line="147" selection-start-column="46" selection-end-line="147" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1538101525841" expanded="true" signature="2196:4231" ph="..." />
+            <marker date="1538101525841" expanded="true" signature="6206:6499" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs3/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="3" column="28" lean-forward="true" selection-start-line="3" selection-start-column="28" selection-end-line="3" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/sklearn/utils/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="26">
+          <caret line="276" column="4" selection-start-line="276" selection-start-column="4" selection-end-line="276" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/sklearn/metrics/classification.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="609">
+          <caret line="1309" column="70" selection-start-line="1309" selection-start-column="61" selection-end-line="1309" selection-end-column="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs3/dataset2.py" />
+    <entry file="file://$PROJECT_DIR$/src/api/cs3/check_dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1282" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs3/dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-997">
+          <caret line="27" column="48" selection-start-line="27" selection-start-column="48" selection-end-line="27" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs3/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="48" column="12" selection-start-line="48" selection-start-column="12" selection-end-line="48" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs3/detection.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2132">
+          <caret line="109" column="17" lean-forward="true" selection-start-line="109" selection-start-column="17" selection-end-line="109" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/api/cs542/detection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="12" column="17" lean-forward="true" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
+        <state relative-caret-position="226">
+          <caret line="14" column="55" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="55" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/api/cs542/dataset.py">
+    <entry file="file://$USER_HOME$/.venvs/blurred_image_detection/lib/python3.6/site-packages/pandas/core/generic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="57" column="30" selection-start-line="57" selection-start-column="30" selection-end-line="57" selection-end-column="30" />
-          <folding>
-            <element signature="e#22#43#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="175">
+          <caret line="8831" column="12" selection-start-line="8831" selection-start-column="12" selection-end-line="8831" selection-end-column="12" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/api/cs542/train.py">
+    <entry file="file://$PROJECT_DIR$/data/output/cs542/output/Bad_Images/0.4082.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file:///usr/lib64/python3.6/multiprocessing/dummy/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="12" column="53" selection-start-line="12" selection-start-column="53" selection-end-line="12" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/api/cs542/cal_best_gate.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="538">
-          <caret line="121" column="26" lean-forward="true" selection-start-line="121" selection-start-column="26" selection-end-line="121" selection-end-column="26" />
+          <caret line="58" lean-forward="true" selection-start-line="58" selection-end-line="58" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <marker date="1537519551831" expanded="true" signature="5083:5376" ph="..." />
+            <element signature="e#0#24#0" expanded="true" />
+            <marker date="1538128858524" expanded="true" signature="384:888" ph="..." />
+            <marker date="1538128858524" expanded="true" signature="899:900" ph="..." />
           </folding>
         </state>
       </provider>

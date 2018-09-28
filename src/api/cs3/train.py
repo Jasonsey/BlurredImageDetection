@@ -22,10 +22,10 @@ from dataset import init_path
 k.set_image_dim_ordering('th')
 seed = 7
 np.random.seed(seed)
-num_classes = 2
+num_classes = 3
 
 
-def load_dataset(path: Path, positive_label: bool=True, length: int=0):
+def load_dataset(path: Path, label: int, length: int=0):
     img_data_list = []
     list_append = img_data_list.append
     i = 0
@@ -42,19 +42,16 @@ def load_dataset(path: Path, positive_label: bool=True, length: int=0):
     img_data /= 255
 
     num_of_samples = img_data.shape[0]
-    if positive_label:
-        labels = np.ones((num_of_samples, ), dtype=np.int64)
-        log = {'length of positive': len(labels)}
-    else:
-        labels = np.zeros((num_of_samples, ), dtype=np.int64)
-        log = {'length of negative': len(labels)}
+    labels = np.ones((num_of_samples, ), dtype=np.int64)
+    labels = labels * label
+    log = 'length of label: {0} is {1}'.format(label, len(labels))
     pprint(log)
     return img_data, labels
 
 
 def prepare_train_data(dataset_dict: edict):
-    labels = np.concatenate((dataset_dict.positive.labels, dataset_dict.negative.labels), axis=0)
-    img_data = np.concatenate((dataset_dict.positive.img_data, dataset_dict.negative.img_data), axis=0)
+    labels = np.concatenate((dataset_dict.blur.labels, dataset_dict.unclear.labels, dataset_dict.clear.labels), axis=0)
+    img_data = np.concatenate((dataset_dict.blur.img_data, dataset_dict.unclear.img_data, dataset_dict.clear.labels), axis=0)
     labels = np_utils.to_categorical(labels, num_classes)
     x, y = shuffle(img_data, labels, random_state=2)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=2)
@@ -96,13 +93,13 @@ class MetricCallback(Callback):
             y_true = np.argmax(self.validation_data[1], axis=1)
             y_pred = np.argmax(self.model.predict(self.validation_data[0], batch_size=self.predict_batch_size), axis=1)
             self.set_scores(y_true, y_pred, logs)
-            print(classification_report(y_true, y_pred, target_names=['清晰', '模糊']))
+            print(classification_report(y_true, y_pred, target_names=['清晰', '重拍', '模糊']))
 
     @staticmethod
-    def set_scores(y_true, y_pred, logs=None):
-        logs['val_recall'] = recall_score(y_true, y_pred)
-        logs['val_precision'] = precision_score(y_true, y_pred)
-        logs['val_f1'] = f1_score(y_true, y_pred)
+    def set_scores(y_true, y_pred, logs=None, output_class=2):
+        logs['val_recall'] = recall_score(y_true, y_pred, average=None)[output_class]
+        logs['val_precision'] = precision_score(y_true, y_pred, average=None)[output_class]
+        logs['val_f1'] = f1_score(y_true, y_pred, average=None)[output_class]
 
 
 def gen_model(input_shape):
@@ -166,22 +163,27 @@ def test(model, x_test, y_test):
 
 def main():
     blur_directory = '../../../data/output/cs542/train/blurred/'
-    clear_directory = '../../../data/output/cs542/train/clear/'
+    clear_directory = '../../../data/output/cs542/train/clear'
+    unclear_directory = '../../../data/output/cs542/train/unclear'
     model_direction = "../../../data/output/cs542/models/"
     pretrain_model = None
     init_path([model_direction])
 
-    img_data_positive, labels_positive = load_dataset(Path(blur_directory), positive_label=True)
-    img_data_negative, labels_negative = load_dataset(Path(clear_directory), positive_label=False,
-                                                      length=len(labels_positive))
+    img_data2, labels2 = load_dataset(Path(blur_directory), label=2)
+    img_data1, labels1 = load_dataset(Path(unclear_directory), label=2)
+    img_data0, labels0 = load_dataset(Path(clear_directory), label=1, length=len(labels2))
     dataset_dict = edict({
-        'positive': {
-            'img_data': img_data_positive,
-            'labels': labels_positive
+        'blur': {
+            'img_data': img_data2,
+            'labels': labels2
         },
-        'negative': {
-            'img_data': img_data_negative,
-            'labels': labels_negative
+        'unclear': {
+            'img_data': img_data1,
+            'labels': labels1
+        },
+        'clear': {
+            'img_data': img_data0,
+            'labels': labels0
         }
     })
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)

@@ -1,0 +1,9 @@
+numpy
+opencv-python
+tensorflow==1.8.0
+Pillow
+pathlib
+keras
+matplotlib
+sklearn
+easydict
