@@ -5,13 +5,14 @@ import numpy as np
 from pprint import pprint
 from keras import backend as k
 from pandas import DataFrame
+from sklearn.metrics import classification_report, confusion_matrix
 
 from train import gen_model
 from dataset2 import resize
 
 
 k.set_image_dim_ordering('th')
-input_path = Path('../../../data/input/License/Test')
+input_path = Path('../../../data/input/License/Train')
 output_path = Path('../../../data/output/cs542/output')
 if not output_path.exists():
     output_path.mkdir(parents=True)
@@ -56,8 +57,11 @@ def split_image(path):
 
 def count_array(array, rangex, rangey):
     data = array[:, 1].reshape((rangex, rangey))
-    mean = np.mean(array, axis=0)
-    score = mean[1]
+    p = (array[:, 1] >= 0.99).sum()
+    n = (array[:, 1] < 0.45).sum()
+    score = float(p) / (p + n)
+    # mean = np.mean(array, axis=0)
+    # score = mean[1]
     print(score, score > 0.5)
     # positive = array.sum()
     # negative = len(array) - positive
@@ -116,5 +120,34 @@ def predict():
                 df.to_csv(str(re_output / ('{:.4f}.csv'.format(score))))
 
 
+def test():
+    paths_list = [input_path.glob('**/*.jpg')]
+    model = gen_model(input_shape=(3, 30, 30))
+    pprint(model.trainable_weights)
+    pprint(model.get_weights()[-1])
+    model_path = best_model(Path('../../../data/output/cs542/models'))
+    model.load_weights(model_path)
+    # model.load_weights('../../../data/output/cs542/models/latest_model.h5')
+    pprint(model.get_weights()[-1])
+
+    y_true, y_pred = [], []
+    for paths in paths_list:
+        for path in paths:
+            if path.parent.name == 'Bad':
+                y_true.append(1)
+            else:
+                y_true.append(0)
+
+            img_array, rangex, rangey = split_image(path)
+            score, flag, data = count_array(model.predict(img_array), rangex, rangey)
+            if score > 0.5:
+                y_pred.append(1)
+            else:
+                y_pred.append(0)
+    print(classification_report(y_true, y_pred, target_names=['清晰', '模糊']))
+    print(confusion_matrix(y_true, y_pred))
+
+
 if __name__ == '__main__':
-    predict()
+    # predict()
+    test()

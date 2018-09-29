@@ -1,8 +1,16 @@
 all:
-	echo 'Start dataset created!'
 	python dataset.py
 	echo 'Dataset Created~!'
 	python train.py
-	echo 'Trained~!'
+	echo 'Trained ~!'
 	python detection.py
-	echo 'Detected~!'
+	echo 'Detected ~!'
+
+clean_model:
+	rm -r ../../../data/output/cs542/models
+
+clean_output:
+	rm -r ../../../data/output/cs542/output
+
+clean:
+	rm -r ../../../data/output/cs542
