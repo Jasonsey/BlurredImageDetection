@@ -2,6 +2,7 @@
 from PIL import Image
 from pathlib import Path
 from dataset2 import resize
+import matplotlib.pyplot as plt
 
 grid_x = 30
 grid_y = 30
@@ -44,7 +45,7 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
         for ii in range(len(images[i])):
             img = images[i][ii]
             img = focuse_image(img)
-            img = resize(img)
+            img = resize(img, size_max=360)
             range_x = img.width // grid_x
             range_y = img.height // grid_y
             for x in range(range_x):
@@ -77,12 +78,15 @@ def main():
 
 
 def debug():
-    ori_path = "../../../data/input/License/Train"
+    ori_path = "../../../data/input/License/temp"
     good_img, bad_img = load_images(Path(ori_path))
-    for img in bad_img:
+    for img in good_img:
         im = focuse_image(img)
-        img.show()
-        im.show()
+        im = resize(im, size_max=340)
+        plt.imshow(im)
+        plt.show()
+        # img.show()
+        # im.show()
         input('....')
 
 

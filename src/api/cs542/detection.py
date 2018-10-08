@@ -35,8 +35,8 @@ def split_image(path):
     gridx, gridy = 30, 30
     path = str(path)
     img = Image.open(path)
-    img = resize(img)
     img = focuse_image(img)     # focus img to center
+    img = resize(img, size_max=340)
     rangex, rangey = img.width // gridx, img.height // gridy
 
     img_data_list = []
@@ -57,8 +57,8 @@ def split_image(path):
 
 def count_array(array, rangex, rangey):
     data = array[:, 1].reshape((rangex, rangey))
-    p = (array[:, 1] >= 0.99).sum()
-    n = (array[:, 1] < 0.45).sum()
+    p = (array[:, 1] >= 0.5).sum()
+    n = (array[:, 1] < 0.5).sum()
     score = float(p) / (p + n)
     # mean = np.mean(array, axis=0)
     # score = mean[1]
@@ -133,10 +133,13 @@ def test():
     y_true, y_pred = [], []
     for paths in paths_list:
         for path in paths:
-            if path.parent.name == 'Bad':
+            if path.parent.name == 'Bad_License':
                 y_true.append(1)
-            else:
+            elif path.parent.name == 'Good_License':
                 y_true.append(0)
+            else:
+                continue
+                # y_true.append(0)
 
             img_array, rangex, rangey = split_image(path)
             score, flag, data = count_array(model.predict(img_array), rangex, rangey)
