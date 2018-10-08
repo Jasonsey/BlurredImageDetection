@@ -5,9 +5,7 @@ from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras import callbacks
-from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers.convolutional import MaxPooling2D
-from keras.layers.convolutional import Convolution2D
+from keras.layers import Dense, Dropout, Activation, Flatten, MaxPooling2D, Convolution2D, GlobalAveragePooling2D
 from keras.utils import np_utils
 from keras import backend as k
 from keras.callbacks import Callback
@@ -122,6 +120,30 @@ def gen_model(input_shape):
     model.add(Dropout(0.2))
     model.add(Dense(num_classes))
     model.add(Activation('softmax'))
+
+    learning_rate = 0.0001
+    adam = Adam(lr=learning_rate)
+    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=["accuracy"])
+
+    model.summary()
+    return model
+
+
+def gen_model2(input_shape):
+    model = Sequential()
+    model.add(Convolution2D(64, (3, 3), activation='relu', padding='same', input_shape=input_shape))
+    model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+    model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+    model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+
+    model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
+    model.add(Convolution2D(1, (3, 3), padding='same'))
+    model.add(GlobalAveragePooling2D())
 
     learning_rate = 0.0001
     adam = Adam(lr=learning_rate)
