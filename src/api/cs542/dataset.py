@@ -1,8 +1,11 @@
 # 使用现有的清晰、模糊图片创建训练数据集
 from PIL import Image
 from pathlib import Path
-from dataset2 import resize
 import matplotlib.pyplot as plt
+
+from dataset2 import resize
+from tools import xml_dataset
+
 
 grid_x = 30
 grid_y = 30
@@ -44,8 +47,8 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
     for i in range(len(images)):
         for ii in range(len(images[i])):
             img = images[i][ii]
-            img = focuse_image(img)
-            img = resize(img, size_max=360)
+            # img = focuse_image(img)
+            # img = resize(img, size_max=360)
             range_x = img.width // grid_x
             range_y = img.height // grid_y
             for x in range(range_x):
@@ -65,7 +68,9 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
 
 
 def main():
-    ori_path = "../../../data/input/License/Train"
+    # ori_path = "../../../data/input/License/Train"
+    xml_path = '../../../data/input/License/Block_License/Seleted'
+    img_path = '../../../data/input/License/Block_License'
 
     clear_path = "../../../data/output/cs542/train/clear/"
     blur_path = "../../../data/output/cs542/train/blurred/"
@@ -73,7 +78,8 @@ def main():
 
     init_path([clear_path, blur_path, input_path])
 
-    good_img, bad_img = load_images(Path(ori_path))
+    # good_img, bad_img = load_images(Path(ori_path))
+    good_img, bad_img = xml_dataset(xml_path, img_path)
     crop_images(good_img, bad_img, Path(input_path), Path(clear_path), Path(blur_path))
 
 

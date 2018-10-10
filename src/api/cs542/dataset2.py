@@ -137,8 +137,8 @@ def resize(im: Image, size_max=1200):
     without exceeding size_max, otherwise it will not be reduced
     """
     width, height = im.width, im.height
-    if width < 900 and height < 900:
-        return im
+    # if width < size_max and height < size_max:
+    #     return im
     if width > height:
         ratio = float(size_max) / width
     else:

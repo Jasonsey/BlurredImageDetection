@@ -142,8 +142,9 @@ def gen_model2(input_shape):
     model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
 
     model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
-    model.add(Convolution2D(1, (3, 3), padding='same'))
-    model.add(GlobalAveragePooling2D())
+    model.add(Convolution2D(2, (3, 3), padding='same'))
+    model.add(GlobalAveragePooling2D(data_format='channels_first'))
+    model.add(Activation('softmax'))
 
     learning_rate = 0.0001
     adam = Adam(lr=learning_rate)
@@ -157,7 +158,7 @@ def train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_mod
     csv_log_file = str(Path(model_direction).parent / 'log' / 'model_train_log.csv')
     tensorboard_log_direction = str(Path(model_direction).parent / 'log')
     ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_precision:.4f}.h5')
-    model_file = str(Path(model_direction) / 'latest_model.h5')
+    # model_file = str(Path(model_direction) / 'latest_model.h5')
 
     early_stopping = callbacks.EarlyStopping(monitor='val_precision', min_delta=0.0001, patience=50, verbose=0, mode='max')
     csv_log = callbacks.CSVLogger(csv_log_file)
@@ -167,9 +168,9 @@ def train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_mod
     if pretrain_model:
         model.load_weights(pretrain_model)
     pprint(model.get_weights()[-1])
-    model.fit(x_train, y_train, batch_size=512, epochs=500, verbose=1, validation_data=(x_test, y_test),
+    model.fit(x_train, y_train, batch_size=128, epochs=500, verbose=1, validation_data=(x_test, y_test),
               callbacks=callbacks_list)
-    model.save(model_file)
+    # model.save(model_file)
     return model
 
 
@@ -207,7 +208,7 @@ def main():
         }
     })
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
-    model = gen_model(img_data[0].shape)
+    model = gen_model2(img_data[0].shape)
     model = train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_model)
     test(model, x_test, y_test)
 

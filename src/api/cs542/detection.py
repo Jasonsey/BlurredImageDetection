@@ -6,13 +6,14 @@ from pprint import pprint
 from keras import backend as k
 from pandas import DataFrame
 from sklearn.metrics import classification_report, confusion_matrix
+import struct
 
-from train import gen_model
+from train import gen_model2 as gen_model
 from dataset2 import resize
 
 
 k.set_image_dim_ordering('th')
-input_path = Path('../../../data/input/License/Train')
+input_path = Path('../../../data/input/License/Test7')
 output_path = Path('../../../data/output/cs542/output')
 if not output_path.exists():
     output_path.mkdir(parents=True)
@@ -104,20 +105,24 @@ def predict():
 
     for paths in paths_list:
         for path in paths:
-            img_array, rangex, rangey = split_image(path)
+            try:
+                img_array, rangex, rangey = split_image(path)
+            except struct.error as e:
+                print('Stuct error %s' % e)
+                continue
             score, flag, data = count_array(model.predict(img_array), rangex, rangey)
             img = Image.open(path)
             img = img.convert('RGB')
             df = DataFrame(data)
             if path.parent.name == 'Good':
                 img.save(str(good_output / ('{:.4f}.jpg'.format(score))))
-                df.to_csv(str(good_output / ('{:.4f}.csv'.format(score))))
+                # df.to_csv(str(good_output / ('{:.4f}.csv'.format(score))))
             elif path.parent.name == 'Bad':
                 img.save(str(bad_output / ('{:.4f}.jpg'.format(score))))
-                df.to_csv(str(bad_output / ('{:.4f}.csv'.format(score))))
+                # df.to_csv(str(bad_output / ('{:.4f}.csv'.format(score))))
             else:
                 img.save(str(re_output / ('{:.4f}.jpg'.format(score))))
-                df.to_csv(str(re_output / ('{:.4f}.csv'.format(score))))
+                # df.to_csv(str(re_output / ('{:.4f}.csv'.format(score))))
 
 
 def test():
@@ -140,8 +145,11 @@ def test():
             else:
                 continue
                 # y_true.append(0)
-
-            img_array, rangex, rangey = split_image(path)
+            try:
+                img_array, rangex, rangey = split_image(path)
+            except struct.error as e:
+                print('Stuct error %s' % e)
+                continue
             score, flag, data = count_array(model.predict(img_array), rangex, rangey)
             if score > 0.5:
                 y_pred.append(1)
@@ -152,5 +160,5 @@ def test():
 
 
 if __name__ == '__main__':
-    # predict()
-    test()
+    predict()
+    # test()
