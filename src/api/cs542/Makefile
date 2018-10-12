@@ -12,5 +12,8 @@ clean_model:
 clean_output:
 	rm -r ../../../data/output/cs542/output
 
+clean_log:
+	rm -r ../../../data/output/cs542/log
+
 clean:
 	rm -r ../../../data/output/cs542

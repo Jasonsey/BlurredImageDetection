@@ -8,20 +8,15 @@ from pandas import DataFrame
 from sklearn.metrics import classification_report, confusion_matrix
 import struct
 
-from train import gen_model2 as gen_model
-from dataset2 import resize
+from train import gen_model as gen_model
+from tools import resize
 
 
 k.set_image_dim_ordering('th')
-input_path = Path('../../../data/input/License/Test7')
+input_path = Path('../../../data/input/License/Train')
 output_path = Path('../../../data/output/cs542/output')
 if not output_path.exists():
     output_path.mkdir(parents=True)
-
-
-def resize_image(img):
-    img = img.resize((90, 90), Image.ANTIALIAS)
-    return img
 
 
 def focuse_image(img):
@@ -33,11 +28,12 @@ def focuse_image(img):
 
 
 def split_image(path):
+    print(path)
     gridx, gridy = 30, 30
-    path = str(path)
     img = Image.open(path)
+    img = img.convert('RGB')
+    img, _ = resize(img)
     img = focuse_image(img)     # focus img to center
-    img = resize(img, size_max=340)
     rangex, rangey = img.width // gridx, img.height // gridy
 
     img_data_list = []
@@ -107,21 +103,21 @@ def predict():
         for path in paths:
             try:
                 img_array, rangex, rangey = split_image(path)
-            except struct.error as e:
-                print('Stuct error %s' % e)
+            except (struct.error, OSError) as e:
+                print('Error: %s, path: %s' % (e, path))
                 continue
             score, flag, data = count_array(model.predict(img_array), rangex, rangey)
             img = Image.open(path)
-            img = img.convert('RGB')
+            # img = img.convert('RGB')
             df = DataFrame(data)
             if path.parent.name == 'Good':
-                img.save(str(good_output / ('{:.4f}.jpg'.format(score))))
+                img.save(str(good_output / ('{:.4f}-{}.jpg'.format(score, path.stem))))
                 # df.to_csv(str(good_output / ('{:.4f}.csv'.format(score))))
             elif path.parent.name == 'Bad':
-                img.save(str(bad_output / ('{:.4f}.jpg'.format(score))))
+                img.save(str(bad_output / ('{:.4f}-{}.jpg'.format(score, path.stem))))
                 # df.to_csv(str(bad_output / ('{:.4f}.csv'.format(score))))
             else:
-                img.save(str(re_output / ('{:.4f}.jpg'.format(score))))
+                img.save(str(re_output / ('{:.4f}-{}.jpg'.format(score, path.stem))))
                 # df.to_csv(str(re_output / ('{:.4f}.csv'.format(score))))
 
 
@@ -138,18 +134,18 @@ def test():
     y_true, y_pred = [], []
     for paths in paths_list:
         for path in paths:
+            try:
+                img_array, rangex, rangey = split_image(path)
+            except (struct.error, OSError) as e:
+                print('Error: %s, path: %s' % (e, path))
+                continue
             if path.parent.name == 'Bad_License':
                 y_true.append(1)
             elif path.parent.name == 'Good_License':
                 y_true.append(0)
             else:
-                continue
-                # y_true.append(0)
-            try:
-                img_array, rangex, rangey = split_image(path)
-            except struct.error as e:
-                print('Stuct error %s' % e)
-                continue
+                # continue
+                y_true.append(0)
             score, flag, data = count_array(model.predict(img_array), rangex, rangey)
             if score > 0.5:
                 y_pred.append(1)
@@ -160,5 +156,9 @@ def test():
 
 
 if __name__ == '__main__':
-    predict()
-    # test()
+    # predict()
+    test()
+    # try:
+    #     split_image('../../../data/input/License/Test7/6732.jpg')
+    # except (struct.error, OSError):
+    #     print('error')

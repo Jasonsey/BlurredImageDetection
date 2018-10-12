@@ -3,7 +3,7 @@ from PIL import Image
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-from dataset2 import resize
+from tools import resize
 from tools import xml_dataset
 
 
@@ -88,7 +88,7 @@ def debug():
     good_img, bad_img = load_images(Path(ori_path))
     for img in good_img:
         im = focuse_image(img)
-        im = resize(im, size_max=340)
+        im = resize(im, size_min=340)
         plt.imshow(im)
         plt.show()
         # img.show()

@@ -41,7 +41,7 @@ def read_img(annotations, img_path):
     return clear_imgs, blur_imgs
 
 
-def resize(im: Image, size_min=1000, reduce_anything=True):
+def resize(im: Image, size_min=1300, reduce_anything=True):
     """
     resize image.
     """

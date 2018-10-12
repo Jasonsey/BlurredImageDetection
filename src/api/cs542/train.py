@@ -4,7 +4,7 @@ from keras.optimizers import Adam
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
-from keras import callbacks
+from keras import callbacks, regularizers
 from keras.layers import Dense, Dropout, Activation, Flatten, MaxPooling2D, Convolution2D, GlobalAveragePooling2D
 from keras.utils import np_utils
 from keras import backend as k
@@ -131,7 +131,7 @@ def gen_model(input_shape):
 
 def gen_model2(input_shape):
     model = Sequential()
-    model.add(Convolution2D(64, (3, 3), activation='relu', padding='same', input_shape=input_shape))
+    model.add(Convolution2D(64, (3, 3), activation='relu', padding='same', input_shape=input_shape, kernel_regularizer=regularizers.l2(0.01)))
     model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
     model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
@@ -208,7 +208,7 @@ def main():
         }
     })
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
-    model = gen_model2(img_data[0].shape)
+    model = gen_model(img_data[0].shape)
     model = train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_model)
     test(model, x_test, y_test)
 
