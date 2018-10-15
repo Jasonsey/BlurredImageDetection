@@ -9,10 +9,13 @@ from keras.layers import Dense, Dropout, Activation, Flatten, MaxPooling2D, Conv
 from keras.utils import np_utils
 from keras import backend as k
 from keras.callbacks import Callback
+from keras.preprocessing.image import ImageDataGenerator
+from keras.applications import VGG16
 from sklearn.metrics import f1_score, precision_score, recall_score, classification_report
 from pathlib import Path
 from pprint import pprint
 from easydict import EasyDict as edict
+from multiprocessing import cpu_count
 
 from dataset import init_path
 
@@ -29,7 +32,9 @@ def load_dataset(path: Path, positive_label: bool=True, length: int=0):
     i = 0
     for img_path in path.glob('*.jpg'):
         i += 1
+        # todo resize
         input_img = cv2.imread(str(img_path))
+        input_img = cv2.resize(input_img, (60, 60), interpolation=cv2.INTER_CUBIC)
         input_img = np.swapaxes(input_img, 0, 2)
         list_append(input_img)
     if 0 < length < i:
@@ -57,6 +62,24 @@ def prepare_train_data(dataset_dict: edict):
     x, y = shuffle(img_data, labels, random_state=2)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=2)
     return x_train, x_test, y_train, y_test, img_data
+
+
+def datagen(x_train, y_train, batch_size=128):
+    train_steps = int(len(y_train) / batch_size) + 1
+    
+    train_datagen = ImageDataGenerator(
+        rescale=None,
+        rotation_range=40,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True)
+    train_generator = train_datagen.flow(
+        x_train,
+        y_train,
+        batch_size=batch_size)
+    return train_generator, train_steps
 
 
 class MetricCallback(Callback):
@@ -103,7 +126,7 @@ class MetricCallback(Callback):
         logs['val_f1'] = f1_score(y_true, y_pred)
 
 
-def gen_model(input_shape):
+def gen_model(input_shape=(3, 30, 30)):
     model = Sequential()
     model.add(Convolution2D(96, 7, 7, input_shape=input_shape))
     model.add(Activation('relu'))
@@ -129,7 +152,7 @@ def gen_model(input_shape):
     return model
 
 
-def gen_model2(input_shape):
+def gen_model2(input_shape=(3, 30, 30)):
     model = Sequential()
     model.add(Convolution2D(64, (3, 3), activation='relu', padding='same', input_shape=input_shape, kernel_regularizer=regularizers.l2(0.01)))
     model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
@@ -144,6 +167,31 @@ def gen_model2(input_shape):
     model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
     model.add(Convolution2D(2, (3, 3), padding='same'))
     model.add(GlobalAveragePooling2D(data_format='channels_first'))
+    model.add(Activation('softmax'))
+
+    learning_rate = 0.0001
+    adam = Adam(lr=learning_rate)
+    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=["accuracy"])
+
+    model.summary()
+    return model
+
+
+def gen_model3(input_shape=(3, 30, 30)):
+    conv_base = VGG16(
+        weights='imagenet',
+        include_top=False,
+        input_shape=input_shape)
+    for layer in conv_base.layers:
+        layer.trainable = False
+    model = Sequential()
+    model.add(conv_base)
+    model.add(Flatten())
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(256, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(num_classes))
     model.add(Activation('softmax'))
 
     learning_rate = 0.0001
@@ -171,6 +219,33 @@ def train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_mod
     model.fit(x_train, y_train, batch_size=128, epochs=500, verbose=1, validation_data=(x_test, y_test),
               callbacks=callbacks_list)
     # model.save(model_file)
+    return model
+
+
+def train2(model, train_generator, train_steps, x_test, y_test, model_direction, pretrain_model):
+    csv_log_file = str(Path(model_direction).parent / 'log' / 'model_train_log.csv')
+    tensorboard_log_direction = str(Path(model_direction).parent / 'log')
+    ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_precision:.4f}.h5')
+    # model_file = str(Path(model_direction) / 'latest_model.h5')
+
+    early_stopping = callbacks.EarlyStopping(monitor='val_precision', min_delta=0.0001, patience=50, verbose=0, mode='max')
+    csv_log = callbacks.CSVLogger(csv_log_file)
+    checkpoint = callbacks.ModelCheckpoint(ckpt_file, monitor='val_precision', verbose=1, save_best_only=True, mode='max')
+    tensorboard_callback = callbacks.TensorBoard(log_dir=tensorboard_log_direction, batch_size=32)
+    callbacks_list = [MetricCallback(), csv_log, early_stopping, checkpoint, tensorboard_callback]
+    if pretrain_model:
+        model.load_weights(pretrain_model)
+    pprint(model.get_weights()[-1])
+
+    model.fit_generator(
+        train_generator,
+        steps_per_epoch=train_steps,
+        epochs=500,
+        validation_data=(x_test, y_test),
+        verbose=1,
+        workers=cpu_count() * 2 + 2,
+        use_multiprocessing=True,
+        callbacks=callbacks_list)
     return model
 
 
@@ -208,10 +283,45 @@ def main():
         }
     })
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
+
     model = gen_model(img_data[0].shape)
     model = train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_model)
     test(model, x_test, y_test)
 
 
+def main2():
+    blur_directory = '../../../data/output/cs542/train/blurred/'
+    clear_directory = '../../../data/output/cs542/train/clear/'
+    model_direction = "../../../data/output/cs542/models/"
+    batch_size = 128
+    pretrain_model = None
+    init_path([model_direction])
+
+
+    img_data_positive, labels_positive = load_dataset(Path(blur_directory), positive_label=True)
+    img_data_negative, labels_negative = load_dataset(Path(clear_directory), positive_label=False,
+                                                      length=len(labels_positive))
+    dataset_dict = edict({
+        'positive': {
+            'img_data': img_data_positive,
+            'labels': labels_positive
+        },
+        'negative': {
+            'img_data': img_data_negative,
+            'labels': labels_negative
+        }
+    })
+    x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
+
+    model = gen_model3(img_data[0].shape)
+
+    train_generator, train_steps = datagen(x_train, y_train, batch_size)
+    print('train_steps: %s' % train_steps)
+    model = train2(model, train_generator, train_steps, x_test, y_test, model_direction, pretrain_model)
+
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    main2()
+    # gen_model3((3, 60, 60))
