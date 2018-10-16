@@ -8,7 +8,7 @@ from pandas import DataFrame
 from sklearn.metrics import classification_report, confusion_matrix
 import struct
 
-from train import gen_model as gen_model
+from train import gen_model2 as gen_model
 from tools import resize
 
 

@@ -34,7 +34,7 @@ def load_dataset(path: Path, positive_label: bool=True, length: int=0):
         i += 1
         # todo resize
         input_img = cv2.imread(str(img_path))
-        input_img = cv2.resize(input_img, (60, 60), interpolation=cv2.INTER_CUBIC)
+        # input_img = cv2.resize(input_img, (60, 60), interpolation=cv2.INTER_CUBIC)
         input_img = np.swapaxes(input_img, 0, 2)
         list_append(input_img)
     if 0 < length < i:
@@ -152,7 +152,7 @@ def gen_model(input_shape=(3, 30, 30)):
     return model
 
 
-def gen_model2(input_shape=(3, 30, 30)):
+def gen_model2(input_shape=(3, None, None)):
     model = Sequential()
     model.add(Convolution2D(64, (3, 3), activation='relu', padding='same', input_shape=input_shape, kernel_regularizer=regularizers.l2(0.01)))
     model.add(Convolution2D(64, (3, 3), activation='relu', padding='same'))
@@ -225,13 +225,13 @@ def train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_mod
 def train2(model, train_generator, train_steps, x_test, y_test, model_direction, pretrain_model):
     csv_log_file = str(Path(model_direction).parent / 'log' / 'model_train_log.csv')
     tensorboard_log_direction = str(Path(model_direction).parent / 'log')
-    ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_precision:.4f}.h5')
+    ckpt_file = str(Path(model_direction) / 'ckpt_model.{epoch:02d}-{val_acc:.4f}.h5')
     # model_file = str(Path(model_direction) / 'latest_model.h5')
 
-    early_stopping = callbacks.EarlyStopping(monitor='val_precision', min_delta=0.0001, patience=50, verbose=0, mode='max')
+    early_stopping = callbacks.EarlyStopping(monitor='val_acc', min_delta=0.0001, patience=200, verbose=0, mode='max')
     csv_log = callbacks.CSVLogger(csv_log_file)
-    checkpoint = callbacks.ModelCheckpoint(ckpt_file, monitor='val_precision', verbose=1, save_best_only=True, mode='max')
-    tensorboard_callback = callbacks.TensorBoard(log_dir=tensorboard_log_direction, batch_size=32)
+    checkpoint = callbacks.ModelCheckpoint(ckpt_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+    tensorboard_callback = callbacks.TensorBoard(log_dir=tensorboard_log_direction, batch_size=256)
     callbacks_list = [MetricCallback(), csv_log, early_stopping, checkpoint, tensorboard_callback]
     if pretrain_model:
         model.load_weights(pretrain_model)
@@ -240,7 +240,7 @@ def train2(model, train_generator, train_steps, x_test, y_test, model_direction,
     model.fit_generator(
         train_generator,
         steps_per_epoch=train_steps,
-        epochs=500,
+        epochs=1000,
         validation_data=(x_test, y_test),
         verbose=1,
         workers=cpu_count() * 2 + 2,
@@ -293,7 +293,7 @@ def main2():
     blur_directory = '../../../data/output/cs542/train/blurred/'
     clear_directory = '../../../data/output/cs542/train/clear/'
     model_direction = "../../../data/output/cs542/models/"
-    batch_size = 128
+    batch_size = 256
     pretrain_model = None
     init_path([model_direction])
 
@@ -313,7 +313,7 @@ def main2():
     })
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
 
-    model = gen_model3(img_data[0].shape)
+    model = gen_model2(img_data[0].shape)
 
     train_generator, train_steps = datagen(x_train, y_train, batch_size)
     print('train_steps: %s' % train_steps)
@@ -323,5 +323,6 @@ def main2():
 
 if __name__ == '__main__':
     # main()
-    main2()
+    # main2()
     # gen_model3((3, 60, 60))
+    gen_model2((3, None, None))
