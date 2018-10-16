@@ -1,21 +1,17 @@
-# 使用现有的清晰、模糊图片创建训练数据集
-from PIL import Image
+"""
+使用现有的清晰、模糊图片创建训练数据集
+"""
+
 from pathlib import Path
+from PIL import Image
 import matplotlib.pyplot as plt
 
-from tools import resize
-from tools import xml_dataset
+from xml_api import resize, xml_dataset
+from tools.tools import init_path
 
 
-grid_x = 30
-grid_y = 30
-
-
-def init_path(paths: list):
-    for path in paths:
-        p = Path(path)
-        if not p.exists():
-            p.mkdir(parents=True)
+GRID_X = 30
+GRID_Y = 30
 
 
 def load_images(ori_path1: Path):
@@ -49,11 +45,11 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
             img = images[i][ii]
             # img = focuse_image(img)
             # img = resize(img, size_max=360)
-            range_x = img.width // grid_x
-            range_y = img.height // grid_y
+            range_x = img.width //GRID_X 
+            range_y = img.height //GRID_Y 
             for x in range(range_x):
                 for y in range(range_y):
-                    bbox = (x * grid_x, y * grid_y, x * grid_x + grid_x, y * grid_y + grid_y)
+                    bbox = (x * GRID_X, y * GRID_Y, x * GRID_X + GRID_X, y * GRID_Y + GRID_Y)
                     slice_bit = img.crop(bbox)
                     if i == 0:
                         path1 = Path(input_path) / ('clear_' + str(ii) + '_' + str(x) + '_' + str(y) + '.jpg')

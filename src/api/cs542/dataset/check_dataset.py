@@ -1,11 +1,15 @@
-from PIL import Image
+"""
+check_dataset
+"""
+
 from pathlib import Path
-from dataset import init_path
 from pprint import pprint
+from PIL import Image
+from tools.tools import init_path
 
 
-grid_x = 30
-grid_y = 30
+GRID_X = 30
+GRID_Y = 30
 
 
 def gen_pics_dict(input_path: Path, verbose: int=0):
@@ -31,8 +35,8 @@ def pic_size(paths: list):
         x, y = int(stem[2]), int(stem[3])
         x_max = x if x > x_max else x_max
         y_max = y if y > y_max else y_max
-    width = x_max * grid_x + grid_x
-    height = y_max * grid_y + grid_y
+    width = x_max * GRID_X +GRID_X 
+    height = y_max * GRID_Y +GRID_Y 
     pprint({'height': height, 'width': width})
     return width, height
 
@@ -46,7 +50,7 @@ def merge_pics(pics_dict: dict, output_path: Path, verbose: int=0):
         for path in paths:
             _, _, x, y = path.stem.split('_')
             x, y = int(x), int(y)
-            box = (x * grid_x, y * grid_y, x * grid_x + grid_x, y * grid_y + grid_y)
+            box = (x * GRID_X, y * GRID_Y, x * GRID_X + GRID_X, y * GRID_Y + GRID_Y)
             slice_bit = Image.open(path)
             image.paste(slice_bit, box)
         if verbose:
@@ -66,6 +70,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
-    
-    
