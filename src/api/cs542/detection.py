@@ -1,22 +1,26 @@
+"""
+detection.py
+"""
+
+import struct
+from pathlib import Path
+from pprint import pprint
 import cv2
 from PIL import Image
-from pathlib import Path
 import numpy as np
-from pprint import pprint
 from keras import backend as k
 from pandas import DataFrame
 from sklearn.metrics import classification_report, confusion_matrix
-import struct
 
-from train import gen_model2 as gen_model
-from tools import resize
+from model import MODEL
+from tools.tools import resize
 
 
 k.set_image_dim_ordering('th')
-input_path = Path('../../../data/input/License/Train')
-output_path = Path('../../../data/output/cs542/output')
-if not output_path.exists():
-    output_path.mkdir(parents=True)
+INPUT_PATH = Path('../../../data/input/License/Train')
+OUTPUT_PATH = Path('../../../data/output/cs542/output')
+if not OUTPUT_PATH.exists():
+    OUTPUT_PATH.mkdir(parents=True)
 
 
 def focuse_image(img):
@@ -57,14 +61,7 @@ def count_array(array, rangex, rangey):
     p = (array[:, 1] >= 0.5).sum()
     n = (array[:, 1] < 0.5).sum()
     score = float(p) / (p + n)
-    # mean = np.mean(array, axis=0)
-    # score = mean[1]
     print(score, score > 0.5)
-    # positive = array.sum()
-    # negative = len(array) - positive
-    # score = float(positive) / (negative + positive)
-    # print(positive, negative, positive > negative)
-    # return score, positive > negative
     return score, score > 0.5, data
 
 
@@ -82,8 +79,8 @@ def best_model(model_path: Path):
 
 
 def predict():
-    paths_list = [input_path.glob('**/*.jpg')]
-    model = gen_model(input_shape=(3, 30, 30))
+    paths_list = [INPUT_PATH.glob('**/*.jpg')]
+    model = MODEL(input_shape=(3, 30, 30))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
     model_path = best_model(Path('../../../data/output/cs542/models'))
@@ -91,9 +88,9 @@ def predict():
     # model.load_weights('../../../data/output/cs542/models/latest_model.h5')
     pprint(model.get_weights()[-1])
 
-    good_output = output_path / 'Good_Images'
-    bad_output = output_path / 'Bad_Images'
-    re_output = output_path / 'Re_Images'
+    good_output = OUTPUT_PATH / 'Good_Images'
+    bad_output = OUTPUT_PATH / 'Bad_Images'
+    re_output = OUTPUT_PATH / 'Re_Images'
 
     for p in [good_output, bad_output, re_output]:
         if not p.exists():
@@ -122,8 +119,8 @@ def predict():
 
 
 def test():
-    paths_list = [input_path.glob('**/*.jpg')]
-    model = gen_model(input_shape=(3, 30, 30))
+    paths_list = [INPUT_PATH.glob('**/*.jpg')]
+    model = MODEL(input_shape=(3, 30, 30))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
     model_path = best_model(Path('../../../data/output/cs542/models'))
@@ -158,7 +155,3 @@ def test():
 if __name__ == '__main__':
     # predict()
     test()
-    # try:
-    #     split_image('../../../data/input/License/Test7/6732.jpg')
-    # except (struct.error, OSError):
-    #     print('error')

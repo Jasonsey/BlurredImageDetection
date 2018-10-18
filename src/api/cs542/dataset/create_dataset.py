@@ -2,12 +2,15 @@
 使用现有的清晰、模糊图片创建训练数据集
 """
 
+import sys
 from pathlib import Path
 from PIL import Image
 import matplotlib.pyplot as plt
 
-from xml_api import resize, xml_dataset
-from tools.tools import init_path
+from xml_api import xml_dataset
+
+sys.path.append('..')
+from tools.tools import init_path, resize
 
 
 GRID_X = 30
@@ -45,8 +48,8 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
             img = images[i][ii]
             # img = focuse_image(img)
             # img = resize(img, size_max=360)
-            range_x = img.width //GRID_X 
-            range_y = img.height //GRID_Y 
+            range_x = img.width // GRID_X
+            range_y = img.height // GRID_Y
             for x in range(range_x):
                 for y in range(range_y):
                     bbox = (x * GRID_X, y * GRID_Y, x * GRID_X + GRID_X, y * GRID_Y + GRID_Y)
@@ -65,12 +68,12 @@ def crop_images(goods: list, bads: list, input_path: Path, clear_path: Path, blu
 
 def main():
     # ori_path = "../../../data/input/License/Train"
-    xml_path = '../../../data/input/License/Block_License/Seleted'
-    img_path = '../../../data/input/License/Block_License'
+    xml_path = '../../../../data/input/License/Block_License/Seleted'
+    img_path = '../../../../data/input/License/Block_License'
 
-    clear_path = "../../../data/output/cs542/train/clear/"
-    blur_path = "../../../data/output/cs542/train/blurred/"
-    input_path = "../../../data/output/cs542/train/input_data/"
+    clear_path = "../../../../data/output/cs542/train/clear/"
+    blur_path = "../../../../data/output/cs542/train/blurred/"
+    input_path = "../../../../data/output/cs542/train/input_data/"
 
     init_path([clear_path, blur_path, input_path])
 

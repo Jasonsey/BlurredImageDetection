@@ -2,6 +2,9 @@
 check_dataset
 """
 
+import sys
+sys.path.append('..')
+
 from pathlib import Path
 from pprint import pprint
 from PIL import Image
@@ -35,8 +38,8 @@ def pic_size(paths: list):
         x, y = int(stem[2]), int(stem[3])
         x_max = x if x > x_max else x_max
         y_max = y if y > y_max else y_max
-    width = x_max * GRID_X +GRID_X 
-    height = y_max * GRID_Y +GRID_Y 
+    width = x_max * GRID_X + GRID_X
+    height = y_max * GRID_Y + GRID_Y
     pprint({'height': height, 'width': width})
     return width, height
 

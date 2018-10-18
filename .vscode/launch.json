@@ -9,8 +9,8 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/api/cs542"
+            "console": "none",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

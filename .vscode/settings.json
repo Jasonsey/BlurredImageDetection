@@ -1,5 +1,4 @@
 {
-    "python.pythonPath": "/Users/Max/.venv/blurred_image_detection/bin/python",
     "files.watcherExclude": {
         "**/.git/objects/**": true,
         "**/.git/subtree-cache/**": true,
@@ -8,6 +7,8 @@
     },
     "python.linting.pylintArgs": [
         "--init-hook",
-        "import sys; sys.path.append('src/api/cs542')"
+        "import sys; sys.path.append('src/api/cs542')",
+        "--disable=C0301,C0111,R0913",
+        "--generate-members"
     ]
 }

@@ -1,5 +1,5 @@
 all:
-	python dataset/create_dataset.py
+	cd dataset && python create_dataset.py
 	echo 'Dataset Created~!'
 	python train.py
 	echo 'Trained ~!'

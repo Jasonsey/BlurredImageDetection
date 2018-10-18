@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "../../Blurred_Image_Detection"
+		}
+	],
+	"settings": {
+		"python.pythonPath": ".vscode/.venv/bin/python"
+	}
+}

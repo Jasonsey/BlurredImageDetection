@@ -85,7 +85,7 @@ def main():
     })
     x_train, x_test, y_train, y_test, img_data = prepare_train_data(dataset_dict)
 
-    model = MODEL(img_data[0].shape)
+    model = MODEL(i--disable=错误码mg_data[0].shape)
     model = train(model, x_train, x_test, y_train, y_test, model_direction, pretrain_model)
     test(model, x_test, y_test)
 
