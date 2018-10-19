@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "none",
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/src/api/dense"
         }
     ]
 }

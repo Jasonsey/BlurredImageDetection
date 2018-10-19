@@ -1,8 +1,13 @@
+import sys
 import numpy as np
 from pathlib import Path
 from keras.callbacks import Callback, EarlyStopping, CSVLogger, ModelCheckpoint, TensorBoard
 from sklearn.metrics import f1_score, precision_score, recall_score, classification_report
+from keras.utils import np_utils
 
+sys.path.append('..')
+from config import Config
+from tools.tools import init_path
 
 
 class MetricCallback(Callback):
@@ -17,9 +22,8 @@ class MetricCallback(Callback):
             logs['val_precision'] = np.float32('-inf')
             logs['val_f1'] = np.float32('-inf')
             if self.validation_data:
-                y_true = np.argmax(self.validation_data[1], axis=1)
-                y_pred = np.argmax(self.model.predict(self.validation_data[0], batch_size=self.predict_batch_size),
-                                   axis=1)
+                y_true = self.validation_data[1]
+                y_pred = self.model.predict_classes(self.validation_data[0], batch_size=self.predict_batch_size)
                 self.set_scores(y_true, y_pred, logs)
 
     def on_train_begin(self, logs=None):
@@ -37,8 +41,8 @@ class MetricCallback(Callback):
         logs['val_precision'] = np.float32('-inf')
         logs['val_f1'] = np.float32('-inf')
         if self.validation_data:
-            y_true = np.argmax(self.validation_data[1], axis=1)
-            y_pred = np.argmax(self.model.predict(self.validation_data[0], batch_size=self.predict_batch_size), axis=1)
+            y_true = self.validation_data[1]
+            y_pred = self.model.predict_classes(self.validation_data[0], batch_size=self.predict_batch_size)
             self.set_scores(y_true, y_pred, logs)
             print(classification_report(y_true, y_pred, target_names=['清晰', '模糊']))
 
@@ -49,10 +53,13 @@ class MetricCallback(Callback):
         logs['val_f1'] = f1_score(y_true, y_pred)
 
 
-def callbacks(model_direction):
-    model_direction = Path(model_direction)
-    csv_log_file = str(model_direction.parent / 'log' / 'model_train_log.csv')
-    tensorboard_log_direction = str(model_direction.parent / 'log')
+def callbacks(output_path):
+    output_path = Path(output_path)
+
+    csv_log_file = str(output_path / 'log' / 'model_train_log.csv')
+    tensorboard_log_direction = str(output_path / 'log')
+    model_direction = output_path / 'models'
+    init_path([model_direction])
     ckpt_file = str(model_direction / 'ckpt_model.{epoch:02d}-{val_acc:.4f}.h5')
 
     early_stopping = EarlyStopping(monitor='val_acc', min_delta=0.0001, patience=200, verbose=0, mode='max')
