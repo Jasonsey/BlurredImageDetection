@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "none",
-            "cwd": "${workspaceFolder}/src/api/dense"
+            "cwd": "${workspaceFolder}/src/api/gray_distribution"
         }
     ]
 }
