@@ -12,4 +12,4 @@ clean_log:
 	rm -r ../../../data/output/gray_distribution/log
 
 clean:
-	rm -r ../../../data/outputgray_distribution/
+	rm -r ../../../data/output/gray_distribution

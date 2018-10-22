@@ -54,7 +54,7 @@ def get_imginfo(path, bins=32):
         stop += bins - (stop-start) % bins
     step = (stop - start) // bins
     for i in range(start, stop, step):
-        print(i, start, stop, step)
+        # print(i, start, stop, step)
         score = ((img_array>i)[img_array<i+step]).sum()
         hist_array.append(score)
     hist_array = np.array(hist_array) / area
