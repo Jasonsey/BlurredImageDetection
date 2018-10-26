@@ -13,7 +13,7 @@
             "cwd": "${workspaceFolder}/src/api/total_image/dataset"
         },
         {
-            "name": "Python: Terminal (integrated)",
+            "name": "Python",
             "type": "python",
             "request": "launch",
             "program": "${file}",

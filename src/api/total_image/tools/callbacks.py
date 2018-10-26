@@ -1,5 +1,6 @@
 from pathlib import Path
 import numpy as np
+from keras import backend as K
 from keras.callbacks import Callback, EarlyStopping, CSVLogger, ModelCheckpoint, TensorBoard
 from sklearn.metrics import f1_score, precision_score, recall_score, classification_report
 
@@ -113,16 +114,34 @@ class SGDRScheduler(Callback):
             self.lr *= self.lr_fac
 
 
+class LRTensorboard(TensorBoard):
+    def __init__(self, log_dir='./logs',
+                 histogram_freq=0,
+                 batch_size=32,
+                 write_graph=True,
+                 write_grads=False,
+                 write_images=False,
+                 embeddings_freq=0,
+                 embeddings_layer_names=None,
+                 embeddings_metadata=None,
+                 embeddings_data=None):  # add other arguments to __init__ if you need
+        super().__init__(log_dir=log_dir)
+
+    def on_epoch_end(self, epoch, logs=None):
+        logs.update({'lr': K.eval(self.model.optimizer.lr)})
+        super().on_epoch_end(epoch, logs)
+
+
 def callbacks(model_direction, epochsize, batchsize):
     model_direction = Path(model_direction)
     csv_log_file = str(model_direction.parent / 'log' / 'model_train_log.csv')
     tensorboard_log_direction = str(model_direction.parent / 'log')
-    ckpt_file = str(model_direction / 'ckpt_model.{epoch:02d}-{val_acc:.4f}.h5')
+    ckpt_file = str(model_direction / 'ckpt_model.{epoch:02d}-{val_precision:.4f}.h5')
 
     early_stopping = EarlyStopping(monitor='val_acc', min_delta=0.0001, patience=200, verbose=0, mode='max')
     csv_log = CSVLogger(csv_log_file)
-    checkpoint = ModelCheckpoint(ckpt_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
-    tensorboard_callback = TensorBoard(log_dir=tensorboard_log_direction, batch_size=256)
+    checkpoint = ModelCheckpoint(ckpt_file, monitor='val_precision', verbose=1, save_best_only=True, mode='max')
+    tensorboard_callback = LRTensorboard(log_dir=tensorboard_log_direction, batch_size=batchsize)
     callbacks_list = [
         MetricCallback(),
         csv_log,

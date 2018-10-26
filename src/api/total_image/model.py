@@ -83,6 +83,7 @@ def gen_model3(input_shape=(3, 30, 30)):
 
 
 def gen_model4(input_shape=(None, None, 3)):
+    print(input_shape)
     conv_base = VGG16(
         weights='imagenet',
         include_top=False,
@@ -91,24 +92,28 @@ def gen_model4(input_shape=(None, None, 3)):
         layer.trainable = False
     model = Sequential()
     model.add(conv_base)
-    model.add(Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=input_shape, kernel_regularizer=regularizers.l2(0.01)))
+    model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(16, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(8, (3, 3), activation='relu', padding='same'))
+    # model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
-    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+    # model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    # model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
-    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
+    # model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
 
-    model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(2, (3, 3), padding='same'))
     model.add(GlobalAveragePooling2D(data_format='channels_last'))
     model.add(Activation('softmax'))
 
-    learning_rate = 0.1
-    adam = Adam(lr=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=["accuracy"])
+    # learning_rate = 0.1
+    # adam = Adam(lr=learning_rate)
+    model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=["accuracy"])
 
     model.summary()
     return model

@@ -14,7 +14,7 @@ from pandas import DataFrame
 from sklearn.metrics import classification_report, confusion_matrix
 
 from model import MODEL
-from tools.tools import resize2
+from tools.tools import resize2, focuse_image
 
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
@@ -25,24 +25,15 @@ if not OUTPUT_PATH.exists():
     OUTPUT_PATH.mkdir(parents=True)
 
 
-def focuse_image(img):
-    w, h = 4, 3
-    width, height = img.width, img.height
-    w, h = (width // w, height // h) if width < height else (width // h, height // w)
-    box = (w, h, width - w, height - h)
-    return img.crop(box)
-
-
 def split_image(path):
     print(path)
     gridx, gridy = 30, 30
     img = Image.open(path)
     img = img.convert('RGB')
     img = focuse_image(img)     # focus img to center
-    img = resize(img)
+    img = resize2(img)
 
-    img_data_list = [img]
-    img_array = np.array(img_data_list)
+    img_array = np.array(img)[np.newaxis, :]
     img_array = img_array.astype(np.float32)
     img_array /= 255
     print(img_array.shape)
@@ -71,7 +62,7 @@ def best_model(model_path: Path):
 
 def predict():
     paths_list = [INPUT_PATH.glob('**/*.jpg')]
-    model = MODEL(input_shape=(3, 30, 30))
+    model = MODEL(input_shape=(None, None, 3))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
     model_path = best_model(Path('../../../data/output/cs542/models'))
@@ -111,7 +102,7 @@ def predict():
 
 def test():
     paths_list = [INPUT_PATH.glob('**/*.jpg')]
-    model = MODEL(input_shape=(3, 30, 30))
+    model = MODEL(input_shape=(None, None, 3))
     pprint(model.trainable_weights)
     pprint(model.get_weights()[-1])
     model_path = best_model(Path('../../../data/output/total_image/models'))
