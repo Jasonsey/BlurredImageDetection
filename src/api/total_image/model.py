@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, Activation
 from keras.optimizers import Adam
-from keras.applications import VGG16
+from keras.applications import VGG16, ResNet50, Xception
 from keras import regularizers
 
 
@@ -119,5 +119,31 @@ def gen_model4(input_shape=(None, None, 3)):
     return model
 
 
+def gen_model5(input_shape=(None, None, 3)):
+    print(input_shape)
+    conv_base = ResNet50(
+        weights='imagenet',
+        include_top=False,
+        input_shape=input_shape)
+    for layer in conv_base.layers:
+        layer.trainable = False
+    model = Sequential()
+    model.add(conv_base)
+    model.add(GlobalAveragePooling2D())
+    model.add(Dense(1024))
+    model.add(Dense(2))
+
+    model.add(Activation('softmax'))
+
+    model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=["accuracy"])
+
+    model.summary()
+    return model
+
+
+
 # aliase
-MODEL = gen_model4
+MODEL = gen_model5
+
+if __name__ == '__main__':
+    gen_model5((256, 256, 3))
