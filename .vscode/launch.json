@@ -18,7 +18,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "none",
-            "cwd": "${workspaceFolder}/src/api/gray_distribution"
+            "cwd": "${workspaceFolder}/src"
         }
     ]
 }

@@ -3,3 +3,4 @@
 data/output/
 data/input/
 __pycache__
+thrift_api

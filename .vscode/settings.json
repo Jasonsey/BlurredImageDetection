@@ -7,7 +7,7 @@
     },
     "python.linting.pylintArgs": [
         "--init-hook",
-        "import sys; sys.path.append('src/api/cs542')",
+        "import sys; sys.path.append('src')",
         "--disable=C0301,C0111,R0913",
         "--generate-members"
     ],

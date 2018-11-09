@@ -2,27 +2,22 @@
 detection.py
 """
 
-import os
 import struct
 from pathlib import Path
 from pprint import pprint
+
 import cv2
 from PIL import Image
 import numpy as np
 from keras import backend as k
+from keras.backend.tensorflow_backend import set_session
+from keras.models import load_model
+import tensorflow as tf
 from pandas import DataFrame
 from sklearn.metrics import classification_report, confusion_matrix
 
-from model import MODEL
-from tools.tools import resize2, focuse_image
-
-
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-# k.set_image_dim_ordering('th')
-INPUT_PATH = Path('../../../data/input/License/Train')
-OUTPUT_PATH = Path('../../../data/output/cs542/output')
-if not OUTPUT_PATH.exists():
-    OUTPUT_PATH.mkdir(parents=True)
+from utils.tools import resize2, focuse_image, init_path
+from dataset import read_dataset
 
 
 def split_image(path):
@@ -47,93 +42,56 @@ def count_array(array):
     return score, score > 0.5, data
 
 
-def best_model(model_path: Path):
-    best_precision = 0
+def best_model(model_path: Path, standard='val_f1'):
+    best_score = 0
     best_path = 'latest_model.h5'
     for path in model_path.glob('*.h5'):
-        if 'ckpt_model' in path.stem:
+        if 'ckpt_model' in path.stem and standard in path.stem:
             # print(path.stem.split('-'))
-            val_precision = float(path.stem.split('-')[1])
-            if val_precision > best_precision:
-                best_precision = val_precision
+            score = float(path.stem.split('-')[1])
+            if score > best_score:
+                best_score = score
                 best_path = path
+    print('Best Model: %s' % best_path.name)
     return str(best_path)
 
 
-def predict():
-    paths_list = [INPUT_PATH.glob('**/*.jpg')]
-    model = MODEL(input_shape=(None, None, 3))
-    pprint(model.trainable_weights)
-    pprint(model.get_weights()[-1])
-    model_path = best_model(Path('../../../data/output/cs542/models'))
-    model.load_weights(model_path)
-    # model.load_weights('../../../data/output/cs542/models/latest_model.h5')
-    pprint(model.get_weights()[-1])
+def predict(arrays):
+    '''
+    cnn预测图片得分接口，输入arrays，返回对应(arrays.shape[0], 2)的得分
+    '''
+    # config TF Session
+    config = tf.ConfigProto()  
+    # config.gpu_options.allow_growth=True
+    config.gpu_options.per_process_gpu_memory_fraction = 0.3
+    session = tf.Session(config=config)
+    set_session(session)
 
-    good_output = OUTPUT_PATH / 'Good_Images'
-    bad_output = OUTPUT_PATH / 'Bad_Images'
-    re_output = OUTPUT_PATH / 'Re_Images'
+    model_path = best_model(Path('../data/output/total_image/models'))
+    model = load_model(model_path)
 
-    for p in [good_output, bad_output, re_output]:
-        if not p.exists():
-            p.mkdir(parents=True)
-
-    for paths in paths_list:
-        for path in paths:
-            try:
-                img_array, rangex, rangey = split_image(path)
-            except (struct.error, OSError) as e:
-                print('Error: %s, path: %s' % (e, path))
-                continue
-            score, flag, data = count_array(model.predict(img_array), rangex, rangey)
-            img = Image.open(path)
-            # img = img.convert('RGB')
-            df = DataFrame(data)
-            if path.parent.name == 'Good':
-                img.save(str(good_output / ('{:.4f}-{}.jpg'.format(score, path.stem))))
-                # df.to_csv(str(good_output / ('{:.4f}.csv'.format(score))))
-            elif path.parent.name == 'Bad':
-                img.save(str(bad_output / ('{:.4f}-{}.jpg'.format(score, path.stem))))
-                # df.to_csv(str(bad_output / ('{:.4f}.csv'.format(score))))
-            else:
-                img.save(str(re_output / ('{:.4f}-{}.jpg'.format(score, path.stem))))
-                # df.to_csv(str(re_output / ('{:.4f}.csv'.format(score))))
+    results = model.predict(arrays/255)
+    k.clear_session()
+    return results
 
 
 def test():
-    paths_list = [INPUT_PATH.glob('**/*.jpg')]
-    model = MODEL(input_shape=(None, None, 3))
-    pprint(model.trainable_weights)
-    pprint(model.get_weights()[-1])
-    model_path = best_model(Path('../../../data/output/total_image/models'))
-    model.load_weights(model_path)
-    # model.load_weights('../../../data/output/cs542/models/latest_model.h5')
+    input_path = Path('../data/input/License/Test')
+    model_path = best_model(Path('../data/output/total_image/models'))
+
+    paths_list = [input_path / 'Good_License', input_path / 'Bad_License']
+    model = load_model(model_path)
     pprint(model.get_weights()[-1])
 
-    y_true, y_pred = [], []
-    for paths in paths_list:
-        for path in paths:
-            try:
-                img_array = split_image(path)
-            except (struct.error, OSError) as e:
-                print('Error: %s, path: %s' % (e, path))
-                continue
-            if path.parent.name == 'Bad_License':
-                y_true.append(1)
-            elif path.parent.name == 'Good_License':
-                y_true.append(0)
-            else:
-                # continue
-                y_true.append(0)
-            score, flag, data = count_array(model.predict(img_array))
-            if score > 0.5:
-                y_pred.append(1)
-            else:
-                y_pred.append(0)
+    data, labels = read_dataset.load_dataset2(paths_list, random=False)
+    y_pred = model.predict_classes(data)
+    y_true = labels
+
     print(classification_report(y_true, y_pred, target_names=['清晰', '模糊']))
     print(confusion_matrix(y_true, y_pred))
 
 
 if __name__ == '__main__':
     # predict()
-    test()
+    # test()
+    pass
