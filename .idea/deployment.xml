@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="GPU2">
+  <component name="PublishConfigData" serverName="GPU2" exclude=".svn;.cvs;.idea;.DS_Store;.git;.hg;*.hprof;*.pyc;*.h5">
     <serverData>
       <paths name="GPU2">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/root/code/Blurred_Image_Detection" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="GPU2-IN">
         <serverdata>
           <mappings>
             <mapping deploy="/root/code/Blurred_Image_Detection" local="$PROJECT_DIR$" web="/" />

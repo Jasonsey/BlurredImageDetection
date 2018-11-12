@@ -10,6 +10,14 @@
           <option name="port" value="8888" />
         </fileTransfer>
       </webServer>
+      <webServer id="93ea3e03-5d02-450b-bb5d-ac5c5913e75b" name="GPU2-IN" url="http://172.16.33.143">
+        <fileTransfer host="172.16.33.143" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

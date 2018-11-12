@@ -6,3 +6,7 @@ pathlib
 keras
 matplotlib
 sklearn
+easydict
+pandas
+thrift
+redis

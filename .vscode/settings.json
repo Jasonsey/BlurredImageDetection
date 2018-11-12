@@ -1,0 +1,15 @@
+{
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/**": true,
+        "**/data/**": true
+    },
+    "python.linting.pylintArgs": [
+        "--init-hook",
+        "import sys; sys.path.append('src')",
+        "--disable=C0301,C0111,R0913",
+        "--generate-members"
+    ],
+    "python.pythonPath": ".vscode/.venv/bin/python"
+}
