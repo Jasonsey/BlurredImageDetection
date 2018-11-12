@@ -16,7 +16,7 @@ def predict(arrays: list):
     cv2_scores = cv2_predict(arrays)
 
     net_arrays = [arrays[i] for i in range(len(cv2_scores)) if cv2_scores[i] < 1400]    # 经验值，高清图片阈值
-    net_scores = net_predict(net_arrays)[:, 1].tolist()
+    net_scores = net_predict(net_arrays)[:, 1].tolist() if len(net_arrays) > 0 else []
 
     scores = []
     for i in range(len(cv2_scores)):

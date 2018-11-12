@@ -11,6 +11,7 @@ from PIL import Image
 
 from api.thrift_api.interface import blur_detection
 from detection import predict
+import config
 
 
 class InterfaceHandler(object):
@@ -21,12 +22,14 @@ class InterfaceHandler(object):
             img = self.format_img(img)
             img_array = np.asarray(img)[np.newaxis, :]
             print(img_array.shape)
-        score = predict(img_array)[0]
+        score = float(predict(img_array)[0])
 
         pred = 1 if score > 0.5 else 0
         res = {
-            'score': score,
-            'pred': pred,
+            'data': {
+                'score': score,
+                'pred': pred, 
+            },
             'status': 1,
             'msg': ''
         }
@@ -53,17 +56,16 @@ def main():
     handler = InterfaceHandler()
     processor = blur_detection.Processor(handler)
     # 监听端口
-    transport = TSocket.TServerSocket("0.0.0.0", 9099)
+    transport = TSocket.TServerSocket("0.0.0.0", config.THRIFT_PORT)
     # 选择传输层
     tfactory = TTransport.TBufferedTransportFactory()
     # 选择传输协议
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
     # 创建服务端
     # server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory)
-    # server.setNumThreads(6)
+    # server.setNumThreads(12)
     server = TProcessPoolServer.TProcessPoolServer(processor, transport, tfactory, pfactory)
-    server.setNumWorkers(3)
-    # server = TServer.TThreadedSelectorServe
+    server.setNumWorkers(config.THRIFT_NUM_WORKS)
     print("Starting thrift server in python...")
     server.serve()
     print("done!")
