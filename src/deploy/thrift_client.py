@@ -85,7 +85,8 @@ def load_dataset(paths: list):
 
 
 async def get_imgarray(path: Path):
-    with open(path, mode='rb') as f:
+    with open(path, 'rb') as f:
+    # with path.open(mode='rb') as f:
         res = f.read()
     return res
 

@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 
 from api.thrift_api.interface import blur_detection
-from detection import predict
+from .detection import predict
 import config
 
 

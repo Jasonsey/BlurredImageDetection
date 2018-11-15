@@ -151,7 +151,7 @@ def read_dataset(paths: list, use_cache=True, cache_home='../data/output/cache')
     init_path([cache_home])
     cache_path = Path(cache_home) / 'dataset_decision_tree.pkl'
     if use_cache and cache_path.exists():
-        with open(cache_path, 'rb') as f:
+        with cache_path.open('rb') as f:
             dataset = pickle.load(f)
     else:
         assert len(paths) == config.NUM_CLASS, 'length of paths should be %s, but get %s' % (NUM_CLASS, len(paths))
@@ -169,7 +169,7 @@ def read_dataset(paths: list, use_cache=True, cache_home='../data/output/cache')
                 'labels': y_test
             }
         })
-        with open(cache_path, 'wb') as f:
+        with cache_path.open('wb') as f:
             pickle.dump(dataset, f)
 
     print('All Dataset Read!')
@@ -184,7 +184,7 @@ def read_dataset2(paths: list, batch_size=128, use_cache=True, cache_home='../da
     init_path([cache_home])
     cache_path = Path(cache_home) / 'dataset_total_image.pkl'
     if use_cache and cache_path.exists():
-        with open(cache_path, 'rb') as f:
+        with cache_path.open('rb') as f:
             cache_dataset = pickle.load(f)
         x_train = cache_dataset.train.data
         y_train = cache_dataset.train.labels
@@ -205,7 +205,7 @@ def read_dataset2(paths: list, batch_size=128, use_cache=True, cache_home='../da
                 'labels': y_test
             }
         })
-        with open(cache_path, 'wb') as f:
+        with cache_path.open('wb') as f:
             pickle.dump(cache_dataset, f)
     
     train_generator, train_steps, epoch_size = datagen(x_train, y_train, batch_size)
@@ -232,7 +232,7 @@ def read_dataset3(paths: list, use_cache=True, cache_home='../data/output/cache'
     init_path([cache_home])
     cache_path = Path(cache_home) / 'dataset_stacking.pkl'
     if use_cache and cache_path.exists():
-        with open(cache_path, 'rb') as f:
+        with cache_path.open('rb') as f:
             dataset = pickle.load(f)
     else:
         assert len(paths) == config.NUM_CLASS, 'length of paths should be %s, but get %s' % (NUM_CLASS, len(paths))
@@ -250,7 +250,7 @@ def read_dataset3(paths: list, use_cache=True, cache_home='../data/output/cache'
                 'labels': y_test
             }
         })
-        with open(cache_path, 'wb') as f:
+        with cache_path.open('wb') as f:
             pickle.dump(dataset, f)
 
     print('All Dataset Read!')
