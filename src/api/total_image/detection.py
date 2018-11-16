@@ -18,6 +18,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 from utils.tools import resize2, focuse_image, init_path
 from dataset import read_dataset
+import config as project_config
 
 
 def split_image(path):
@@ -62,8 +63,8 @@ def predict(arrays):
     '''
     # config TF Session
     config = tf.ConfigProto()  
-    # config.gpu_options.allow_growth=True
-    config.gpu_options.per_process_gpu_memory_fraction = 0.3
+    config.gpu_options.allow_growth=True    # 解决多进程下GPU cuda访问异常问题
+    config.gpu_options.per_process_gpu_memory_fraction = project_config.PREDICT_GPU_MEMORY
     session = tf.Session(config=config)
     set_session(session)
 

@@ -1,0 +1,7 @@
+.vscode
+.git
+.gitignore
+data/input
+data/output/cache
+data/output/total_image/log
+data/output.bak
