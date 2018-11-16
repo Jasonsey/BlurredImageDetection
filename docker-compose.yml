@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  blurred_image_detection:
+    image: blur_detection
+    build: .
+    ports:
+      - 9099:9099
+    volumes:
+      - /data:/app/data/input

@@ -12,15 +12,17 @@ from thrift.protocol import TBinaryProtocol
 from PIL import Image
 import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
+from multiprocessing import Pool
 
 from api.thrift_api.interface import blur_detection  # 引入客户端类
+import config
 
 
 class TransportClient(object):
     """
     传输一个文件到服务端并返回服务端返回的数据
     """
-    def __init__(self, host='0.0.0.0', port='9099'):
+    def __init__(self, host='0.0.0.0', port=9099):
         self.host = host
         self.port = port
         self.client = None
@@ -32,7 +34,7 @@ class TransportClient(object):
             res = self.client.reco(imgbyte)
             res = json.loads(res)
         except Thrift.TException as e:
-            res = {'status': 0, 'msg': e}
+            res = {'status': 0, 'msg': e, 'data': ''}
         return res
 
     def open(self):
@@ -83,13 +85,14 @@ def load_dataset(paths: list):
 
 
 async def get_imgarray(path: Path):
-    with open(path, mode='rb') as f:
+    with open(path, 'rb') as f:
+    # with path.open(mode='rb') as f:
         res = f.read()
     return res
 
 
-async def get_result(data: bytes, host: str, port: str):
-    with TransportClient(host=host, port=port) as client:
+def get_result(data: bytes):
+    with TransportClient(host=config.THRIFT_HOST, port=config.THRIFT_PORT) as client:
         res = client.send(data)
     return res
 
@@ -102,25 +105,16 @@ def test():
     y_pred, y_true = [], []
 
     start = time.time()
-    results = []
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+    pool = Pool()
+    results = pool.map(get_result, data)
+    
     for i in range(len(labels)):
-        results.append(asyncio.ensure_future(get_result(data[i], '172.18.31.211', '9099')))
-        print(i)
-    loop.run_until_complete(asyncio.wait(results))
-
-    i = 0
-    for result in results:
-        res = result.result()
+        res = results[i]
         if res['status'] == 1:
-            y_pred.append(res['pred'])
+            y_pred.append(res['data']['pred'])
             y_true.append(labels[i])
         else:
             print(res['msg'])
-            # break
-        i += 1
-        
     print(classification_report(y_true, y_pred, target_names=['清晰', '模糊']))
     print(confusion_matrix(y_true, y_pred))
     print(time.time() - start)
