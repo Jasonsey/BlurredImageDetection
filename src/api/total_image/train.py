@@ -33,7 +33,7 @@ def train(model, input_dataset: EasyDict, model_direction, pretrain_model):
 
     model.fit_generator(
         input_dataset.train,
-        steps_per_epoch=input_dataset.epoch_size,
+        steps_per_epoch=input_dataset.train_steps,
         epochs=1000,
         validation_data=(input_dataset.test.data, input_dataset.test.labels),
         verbose=1,
