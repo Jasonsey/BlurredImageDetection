@@ -1,0 +1,35 @@
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
+
+LABEL Name=blurred_detection_base
+ENV TZ Asia/Shanghai
+ENV APP_ROOT /app
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository ppa:jonathonf/python-3.6 && \
+    apt-get update && \
+    apt-get install -y --allow-downgrades --allow-change-held-packages \
+        libcudnn7=7.0.5.15-1+cuda9.0 \
+        software-properties-common \
+        thrift-compiler \
+        python3.6 \
+        libopencv-dev \
+        python3-venv \
+        wget && \
+    wget https://bootstrap.pypa.io/get-pip.py && \
+    python3.6 get-pip.py && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR ${APP_ROOT}
+
+ADD requirements.txt ${APP_ROOT}
+# Using pip:
+RUN pip3.6 install \
+        --no-cache-dir \
+        --trusted-host 172.18.31.204 \
+        -i http://172.18.31.204:8081/repository/pypi-aliyun/simple \
+        -r requirements.txt

@@ -73,7 +73,7 @@ class SGDRScheduler(Callback):
     def __init__(self,
                 epochsize,
                 batchsize,
-                epochs_to_restart=2,
+                epochs_to_restart=20,
                 mult_factor=2,
                 lr_fac=0.1,
                 lr_reduction_epochs=(60, 120, 160)):
@@ -101,6 +101,7 @@ class SGDRScheduler(Callback):
             (self.batches_per_epoch * self.epochs_to_restart)
         lr = 0.5 * self.lr * (1 + np.cos(fraction_to_restart * np.pi))
         K.set_value(self.model.optimizer.lr, lr)
+        logs['lr'] = lr
 
         self.batch_since_restart += 1
         self.lr_log.append(lr)
@@ -113,24 +114,6 @@ class SGDRScheduler(Callback):
 
         if (self.epoch + 1) in self.lr_reduction_epochs:
             self.lr *= self.lr_fac
-
-
-class LRTensorboard(TensorBoard):
-    def __init__(self, log_dir='./logs',
-                 histogram_freq=0,
-                 batch_size=32,
-                 write_graph=True,
-                 write_grads=False,
-                 write_images=False,
-                 embeddings_freq=0,
-                 embeddings_layer_names=None,
-                 embeddings_metadata=None,
-                 embeddings_data=None):  # add other arguments to __init__ if you need
-        super().__init__(log_dir=log_dir)
-
-    def on_epoch_end(self, epoch, logs=None):
-        logs.update({'lr': K.eval(self.model.optimizer.lr)})
-        super().on_epoch_end(epoch, logs)
 
 
 def get_callbacks(model_direction, epochsize, batchsize):
@@ -147,13 +130,13 @@ def get_callbacks(model_direction, epochsize, batchsize):
     csv_log = CSVLogger(csv_log_file)
     checkpoint = ModelCheckpoint(ckpt_file, monitor='val_precision', verbose=1, save_best_only=True, mode='max')
     checkpoint2 = ModelCheckpoint(ckpt_file2, monitor='val_f1', verbose=1, save_best_only=True, mode='max')
-    tensorboard_callback = LRTensorboard(log_dir=tensorboard_log_direction, batch_size=batchsize)
+    tensorboard_callback = TensorBoard(log_dir=tensorboard_log_direction, batch_size=batchsize)
+
     callbacks_list = [
         MetricCallback(predict_batch_size=batchsize),
         csv_log,
         early_stopping,
         checkpoint,
         checkpoint2,
-        tensorboard_callback,
-        SGDRScheduler(epochsize=epochsize, batchsize=batchsize)]
+        tensorboard_callback]
     return callbacks_list

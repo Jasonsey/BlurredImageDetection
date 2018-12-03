@@ -71,7 +71,7 @@ def predict(arrays):
     model_path = best_model(Path('../data/output/total_image/models'))
     model = load_model(model_path)
 
-    results = model.predict(arrays/255)
+    results = model.predict(arrays/255, batch_size=2)
     k.clear_session()
     return results
 
