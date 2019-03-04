@@ -1,4 +1,4 @@
-version=1.2.0
+version=1.2.1
 
 name=blur_detection
 base_name=${name}_base
@@ -10,9 +10,9 @@ remote_base=172.18.31.204:3001/linjx/${base_name}
 
 
 server:
-	cd src && python3.6 main.py server
+	cd src && python3.6 main.pyc server
 client:
-	cd src && python3.6 main.py client
+	cd src && python3.6 main.pyc client
 thrift:
 	mkdir -p src/api/thrift_api && thrift -r -gen py -out thrift_api interface.thrift
 
