@@ -1,3 +1,10 @@
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""detection api for thrift service"""
 import os
 import numpy as np
 
@@ -10,9 +17,17 @@ os.environ["CUDA_VISIBLE_DEVICES"] = config.CUDA_VISIBLE_DEVICES
 
 
 def predict(arrays: list):
-    '''
-    针对服务提供的接口
-    '''
+    """detection api for thrift service
+    
+    Arguments:
+        arrays: a list of np.ndarray
+    
+    Returns:
+        a np.ndarray, scores of each input image
+
+    Output shape:
+        (None, )
+    """
     cv2_scores = cv2_predict(arrays)
 
     net_arrays = [arrays[i] for i in range(len(cv2_scores)) if cv2_scores[i] < 1400]    # 经验值，高清图片阈值

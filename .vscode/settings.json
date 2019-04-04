@@ -11,5 +11,5 @@
         "--disable=C0301,C0111,R0913",
         "--generate-members"
     ],
-    "python.pythonPath": "/Users/Max/.venv/blurred_image_detection/bin/python"
+    "python.pythonPath": "C:\\ProgramData\\Anaconda3\\envs\\blurred-image-detection\\python.exe"
 }

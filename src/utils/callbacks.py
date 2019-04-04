@@ -1,3 +1,10 @@
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""keras callback code"""
 from pathlib import Path
 import numpy as np
 from keras import backend as K
@@ -6,6 +13,14 @@ from sklearn.metrics import f1_score, precision_score, recall_score, classificat
 
 
 class MetricCallback(Callback):
+    """custom callback. 
+    
+    Arguments:
+        predict_batch_size: the batch size for prediction
+        include_on_batch: if True, on each batch end, it will calculate val_recall, val_precition, val_f1
+            then saves them in the logs
+    """
+
     def __init__(self, predict_batch_size=64, include_on_batch=False):
         super(MetricCallback, self).__init__()
         self.predict_batch_size = predict_batch_size
@@ -52,13 +67,13 @@ class MetricCallback(Callback):
 
 
 class SGDRScheduler(Callback):
-    '''Schedule learning rates with restarts
+    """Schedule learning rates with restarts
     A simple restart technique for stochastic gradient descent.
     The learning rate decays after each batch and peridically resets to its
     initial value. Optionally, the learning rate is additionally reduced by a
 ￼    fixed factor at a predifined set of epochs.
 ￼
-    # Arguments
+    Arguments:
         epochsize: Number of samples per epoch during training.
         batchsize: Number of samples per batch during training.
         start_epoch: First epoch where decay is applied.
@@ -67,9 +82,9 @@ class SGDRScheduler(Callback):
         lr_fac: Decrease of learning rate at epochs given in lr_reduction_epochs.
         lr_reduction_epochs: Fixed list of epochs at which to reduce learning rate.
 ￼
-￼    # References
-￼       - [SGDR: Stochastic Gradient Descent with Restarts](http://arxiv.org/abs/1608.03983)
-￼    '''
+￼    References:
+        [SGDR: Stochastic Gradient Descent with Restarts](http://arxiv.org/abs/1608.03983)
+￼    """
     def __init__(self,
                 epochsize,
                 batchsize,
@@ -117,9 +132,16 @@ class SGDRScheduler(Callback):
 
 
 def get_callbacks(model_direction, epochsize, batchsize):
-    '''
-    返回 keras 的 callback list
-    '''
+    """return all the keras callbacks required
+    
+    Arguments:
+        model_direction: the model direction where trained model save
+        epochsize: epoch size
+        batchsize: batch size
+    
+    Returns:
+        a list of callbacks
+    """
     model_direction = Path(model_direction)
     csv_log_file = str(model_direction.parent / 'log' / 'model_train_log.csv')
     tensorboard_log_direction = str(model_direction.parent / 'log')
