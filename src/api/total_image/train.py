@@ -1,7 +1,10 @@
-"""
-train.py
-"""
-
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""the api of training the CNN model"""
 from pathlib import Path
 from multiprocessing import cpu_count
 
@@ -17,11 +20,17 @@ import config
 
 
 def train(model, input_dataset: EasyDict, model_direction, pretrain_model):
-    # # config TF Session
-    # config = tf.ConfigProto()  
-    # config.gpu_options.allow_growth=True   
-    # session = tf.Session(config=config)
-    # set_session(session)
+    """train model api
+
+    Arguments:
+        model: untrained model
+        input_dataset: an EasyDict which consists of train data and train labels
+        model_direction: where the trained model will be saved
+        pretrain_model: if not null, it will load the pretrained model before training
+    
+    Returns:
+        model: trained model
+    """
 
     callbacks_list = get_callbacks(
         model_direction,
@@ -45,6 +54,7 @@ def train(model, input_dataset: EasyDict, model_direction, pretrain_model):
 
 
 def main():
+    """pipline for training the CNN model"""
     blur_path = '../data/input/License/Train/Bad_License/'
     clear_path = '../data/input/License/Train/Good_License/'
     model_direction = '../data/output/total_image/models/'
@@ -62,5 +72,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
-    main2()
+    main()

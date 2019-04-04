@@ -1,7 +1,10 @@
-"""
-detection.py
-"""
-
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""using the blurred image detection model to detect the test set"""
 import struct
 from pathlib import Path
 from pprint import pprint
@@ -22,6 +25,7 @@ from api.total_image.detection import predict as cnn_predict
 
 
 def load_img_score(arrays: list):
+    """read the image's laplacian score with opencv and the score CNN model predicts"""
     async def get_info_array(array):
         info = get_imginfo_by_array(array)
         img = Image.fromarray(array)
@@ -54,9 +58,14 @@ def load_img_score(arrays: list):
 
 
 def predict(arrays: list):
-    '''
-    stacking预测图片得分接口，输入arrays，返回对应(arrays.shape[0], 2)的得分
-    '''
+    """the stacking model predicts image's scores with the given arrays
+    
+    Arguments:
+        arrays: 2D np.ndarray with shape (None, 2) which consists of decision tree score and CNN score
+    
+    Returns:
+        1D np.ndarray with shape (None, 2)
+    """
     model_path = '../data/output/stacking/models/train_model.pkl'
     model = joblib.load(model_path)
 
@@ -67,6 +76,7 @@ def predict(arrays: list):
 
 
 def test():
+    """pipline for testing the stacking model"""
     input_path = Path('../data/input/License/Test')
     model_path = '../data/output/stacking/models/train_model.pkl'
 
@@ -75,14 +85,6 @@ def test():
 
     data, labels = load_dataset3(paths_list, random=False)
 
-    # # test scale
-    # data *= np.array([0.5, 0.5], dtype='float32')
-    # y_pred = (data.sum(axis=1)>0.5).astype('float32')
-
-    # y_ = model.predict_proba(data)
-    # y_ = y_[y_[:,0]>0]
-    # y_ = y_[y_[:,0]<1]
-    # pprint(y_)
     y_pred = model.predict(data)
     y_true = labels
 

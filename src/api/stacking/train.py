@@ -1,3 +1,10 @@
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""taining the stacking model"""
 from pathlib import Path
 from easydict import EasyDict
 from sklearn import tree, metrics
@@ -8,6 +15,13 @@ from dataset.read_dataset import read_dataset3
 
 
 def train(model, input_dataset: EasyDict, output_path):
+    """train the stacking model
+    
+    Arguments:
+        model: a untrained model
+        input_dataset: an EasyDict which consists of train data an train labels
+        output_path: where the trained model will be saved
+    """
     model.fit(
         input_dataset.train.data,
         input_dataset.train.labels)
@@ -23,6 +37,7 @@ def train(model, input_dataset: EasyDict, output_path):
 
 
 def main():
+    """pipline for training the stacking model"""
     blur_path = '../data/input/License/Train/Bad_License/'
     clear_path = '../data/input/License/Train/Good_License/'
     output_path = '../data/output/stacking/models'

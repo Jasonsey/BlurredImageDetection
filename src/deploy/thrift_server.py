@@ -1,3 +1,10 @@
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""thrift server"""
 import json
 import io
 
@@ -15,6 +22,7 @@ import config
 
 
 class InterfaceHandler(object):
+    """thrift iterface handler"""
     def reco(self, imgbytes):
         print('\nserver process...')
         with io.BytesIO(imgbytes) as f:
@@ -36,7 +44,7 @@ class InterfaceHandler(object):
         return json.dumps(res)
     
     def format_img(self, image):
-        '''部分图片直接转换成RGB，会出现颜色反转现象'''
+        """Some pictures will appear abnormal color if they are converted to RGB directly."""
         if image.mode == 'RGBA':
             r, g, b, a = image.split()
             rs = np.array(r)
@@ -51,7 +59,6 @@ class InterfaceHandler(object):
 
 
 def main():
-    # TODO 服务端多进程被调用时，速度并没有很大提升，待解决
     # 创建服务端
     handler = InterfaceHandler()
     processor = blur_detection.Processor(handler)

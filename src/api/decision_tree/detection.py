@@ -1,7 +1,10 @@
-"""
-detection.py
-"""
-
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""the dicison tree model's detection api"""
 import struct
 from pathlib import Path
 from pprint import pprint
@@ -18,42 +21,15 @@ from utils.tools import resize2, focuse_image, get_imginfo
 from dataset import read_dataset
 
 
-def split_image(path):
-    img = get_imginfo(path)
-
-    img_array = np.array(img)[np.newaxis, :]
-    img_array = img_array.astype(np.float32)
-    img_array /= 255
-    print(img_array.shape)
-    return img_array
-
-
-def count_array(array):
-    print(array)
-    data = array[:, 1]
-    score = data[0]
-    print(score, score > 0.5)
-    return score, score > 0.5, data
-
-
-def best_model(model_path: Path):
-    best_precision = 0
-    best_path = 'latest_model.h5'
-    for path in model_path.glob('*.h5'):
-        if 'ckpt_model' in path.stem:
-            # print(path.stem.split('-'))
-            val_precision = float(path.stem.split('-')[1])
-            if val_precision > best_precision:
-                best_precision = val_precision
-                best_path = path
-    print('Best Model: %s' % best_path.name)
-    return str(best_path)
-
-
 def predict(arrays):
-    '''
-    tree预测图片得分接口，输入arrays，返回对应(arrays.shape[0], 2)的得分
-    '''
+    """the dicison tree model's detection api
+    
+    Arguments:
+        arrays: 2D np.ndarray with shape (None, 3)
+    
+    Returns:
+        1D np.ndarray with shape (None, 1)
+    """
     model_path = '../data/output/decision_tree/models/train_model.pkl'
     model = joblib.load(model_path)
     results = model.predict_proba(arrays)
@@ -61,6 +37,7 @@ def predict(arrays):
 
 
 def test():
+    """pipline for detection the dataset with decision tree model"""
     input_path = Path('../data/input/License/Test')
     model_path = '../data/output/decision_tree/models/train_model.pkl'
 

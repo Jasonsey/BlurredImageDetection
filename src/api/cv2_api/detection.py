@@ -1,12 +1,24 @@
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""reading the image's laplacian with opencv"""
 import cv2
 import asyncio
 import numpy as np
 
 
 def predict(arrays):
-    '''
-    opencv laplacian port
-    '''
+    """"reading the image's laplacian with opencv
+    
+    Arguments:
+        arrays: a list of np.ndarray
+    
+    Returns:
+        2D np.ndarray of image's laplacian scores
+    """
     async def get_score(array):
         img = cv2.cvtColor(array, cv2.COLOR_RGB2GRAY)
         img = cv2.resize(img, (500, 500))  # 为方便与其他图片比较可以将图片resize到同一个大小

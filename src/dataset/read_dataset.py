@@ -1,3 +1,10 @@
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""read training data set from training path"""
 import sys 
 import asyncio
 from pathlib import Path
@@ -17,9 +24,16 @@ from api.total_image import detection as cnn_detection
 
 
 def load_dataset(paths: list, random=True):
-    '''
-    用于decision_tree使用的读取数据接口
-    '''
+    """the decision tree reading image from disk api
+    
+    Arguments:
+        paths: a list of string of pathlib.Path
+        random: whether to shuffle the data or not
+    
+    Returns:
+        data: 4D np.ndarray of images
+        labels: 2D np.ndarray of image's labels
+    """
     data, labels = [], []
     for i in range(len(paths)):
         path = Path(paths[i])
@@ -43,9 +57,16 @@ def load_dataset(paths: list, random=True):
 
 
 def load_dataset2(paths: list, random=True):
-    '''
-    加载total_image数据集
-    '''
+    """the CNN model's reading image from disk api
+    
+    Arguments:
+        paths: a list of string of pathlib.Path
+        random: whether to shuffle the data or not
+    
+    Returns:
+        data: 4D np.ndarray of images
+        labels: 2D np.ndarray of image's labels  
+    """
     data, labels = [], []
     for i in range(len(paths)):
         path = Path(paths[i])
@@ -70,9 +91,16 @@ def load_dataset2(paths: list, random=True):
 
 
 def load_dataset3(paths: list, random=True):
-    '''
-    从本地硬盘加载stacking的数据集, 返回tree + cnn得分，以及原始的label
-    '''
+    """the stacking model's reading image from disk api
+    
+    Arguments:
+        paths: a list of string of pathlib.Path
+        random: whether to shuffle the data or not
+    
+    Returns:
+        data: 4D np.ndarray of images
+        labels: 2D np.ndarray of image's labels  
+    """
     data_info, data_array, labels = [], [], []
     for i in range(len(paths)):
         path = Path(paths[i])
@@ -104,6 +132,7 @@ def load_dataset3(paths: list, random=True):
 
 
 async def imginfo_and_array(path):
+    """return information and array of an image"""
     img = Image.open(path).convert('RGB')
     imginfo = list(get_imginfo(path))
 
@@ -114,10 +143,18 @@ async def imginfo_and_array(path):
 
 
 def split_dataset(*array):
+    """split the data set into train set and test set"""
     return train_test_split(*array, test_size=0.2, random_state=2)
 
 
 def datagen(x_train, y_train, batch_size=128):
+    """data augment of CNN model
+
+    Arguments:
+        x_train: 4D np.ndarray of images
+        y_train: 2D np.ndarray of labels
+        batch_size: batch size
+    """
     epoch_size = len(y_train)
     if epoch_size % batch_size < batch_size / config.GPUS:    # 使用多GPU时，可能出现其中1个GPU 0 batchsize问题
         x_train = x_train[:-(epoch_size % batch_size)]
@@ -144,9 +181,17 @@ def datagen(x_train, y_train, batch_size=128):
 
 
 def read_dataset(paths: list, use_cache=True, cache_home='../data/output/cache'):
-    '''
-    decision_tree使用的数据集读取接口
-    '''
+    """reading data set api for decision tree model
+    
+    Arguments:
+        paths: a list of string or pathlib.Path
+        use_cache: if True and the cache existing, this api will read the cache instead 
+            of read the data from disk
+        cache_home: where the cache will be saved
+    
+    Returns:
+        dataset: a dict of data set
+    """
     cache_home = Path(cache_home)
     init_path([cache_home])
     cache_path = Path(cache_home) / 'dataset_decision_tree.pkl'
@@ -177,9 +222,18 @@ def read_dataset(paths: list, use_cache=True, cache_home='../data/output/cache')
 
 
 def read_dataset2(paths: list, batch_size=128, use_cache=True, cache_home='../data/output/cache'):
-    '''
-    读取total_image图片训练数据集
-    '''
+    """reading data set api for CNN model
+    
+    Arguments:
+        paths: a list of string or pathlib.Path
+        batch_size: batch size
+        use_cache: if True and the cache existing, this api will read the cache instead 
+            of read the data from disk
+        cache_home: where the cache will be saved
+    
+    Returns:
+        dataset: a dict of data set
+    """
     cache_home = Path(cache_home)
     init_path([cache_home])
     cache_path = Path(cache_home) / 'dataset_total_image.pkl'
@@ -225,9 +279,17 @@ def read_dataset2(paths: list, batch_size=128, use_cache=True, cache_home='../da
 
 
 def read_dataset3(paths: list, use_cache=True, cache_home='../data/output/cache'):
-    '''
-    读取stacking的数据集
-    '''
+    """reading data set api for stacking model
+    
+    Arguments:
+        paths: a list of string or pathlib.Path
+        use_cache: if True and the cache existing, this api will read the cache instead 
+            of read the data from disk
+        cache_home: where the cache will be saved
+    
+    Returns:
+        dataset: a dict of data set
+    """
     cache_home = Path(cache_home)
     init_path([cache_home])
     cache_path = Path(cache_home) / 'dataset_stacking.pkl'
