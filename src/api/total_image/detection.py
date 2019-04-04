@@ -1,7 +1,10 @@
-"""
-detection.py
-"""
-
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""the CNN model's detection file"""
 import struct
 from pathlib import Path
 from pprint import pprint
@@ -21,29 +24,16 @@ from dataset import read_dataset
 import config as project_config
 
 
-def split_image(path):
-    print(path)
-    gridx, gridy = 30, 30
-    img = Image.open(path)
-    img = img.convert('RGB')
-    img = focuse_image(img)     # focus img to center
-    img = resize2(img)
-
-    img_array = np.array(img)[np.newaxis, :]
-    img_array = img_array.astype(np.float32)
-    img_array /= 255
-    print(img_array.shape)
-    return img_array
-
-
-def count_array(array):
-    data = array[:, 1]
-    score = data[0]
-    print(score, score > 0.5)
-    return score, score > 0.5, data
-
-
 def best_model(model_path: Path, standard='val_f1'):
+    """find the best model from a given path
+
+    Arguments:
+        model_path: pathlib.Path where the cache model saved
+        standard: criteria for finding the best model
+
+    Returns:
+        a string of the best model's path
+    """
     best_score = 0
     best_path = 'latest_model.h5'
     for path in model_path.glob('*.h5'):
@@ -58,9 +48,14 @@ def best_model(model_path: Path, standard='val_f1'):
 
 
 def predict(arrays):
-    '''
-    cnn预测图片得分接口，输入arrays，返回对应(arrays.shape[0], 2)的得分
-    '''
+    """the CNN model's prediction api
+    
+    Arguments:
+        arrays: 4D np.ndarray of images
+    
+    Returns:
+        2D np.ndarray with shape (None, 2)
+    """
     # config TF Session
     config = tf.ConfigProto()  
     config.gpu_options.allow_growth=True    # 解决多进程下GPU cuda访问异常问题
@@ -77,6 +72,7 @@ def predict(arrays):
 
 
 def test():
+    """pipline for test the CNN model"""
     input_path = Path('../data/input/License/Test')
     model_path = best_model(Path('../data/output/total_image/models'))
 
@@ -93,6 +89,4 @@ def test():
 
 
 if __name__ == '__main__':
-    # predict()
-    # test()
     pass

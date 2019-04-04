@@ -1,9 +1,12 @@
 # -*- coding:utf-8 -*- 
 #!/usr/bin/env python3.6
-"""
-模型训练、测试文件
-"""
-
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""model train and test entry"""
 import os
 from pathlib import Path
 
@@ -25,10 +28,28 @@ from deploy.thrift_client import test as client
 from deploy.thrift_server import main as server
 
 
+# the gpu device input from command line or default configuration file  
 os.environ["CUDA_VISIBLE_DEVICES"] = config.CUDA_VISIBLE_DEVICES if not args.gpu else args.gpu
 
 
 def main():
+    """main entry of the project
+
+    Arguments:
+        command: input from comman line. Here are all possible values:
+            train_all: train and test all of the 3 models
+            train_cnn: only train and test the CNN model
+            test_cnn: test the CNN model
+            train_tree: train and test the decision tree model
+            test_tree: test the decision tree model
+            train_stacking: train and test the stacking model
+            test_staacking: test the stacking model
+            server: start the detection service
+            client: start the detection client, and it will show the test results
+
+    Returns:
+        None
+    """
     command = args.command
     work_flows = {
         'train_all': [cnn_train, cnn_test, tree_train, tree_test, stacking_train, stacking_test],

@@ -1,3 +1,10 @@
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""train the decision tree model"""
 from pathlib import Path
 from easydict import EasyDict
 from sklearn import tree, metrics
@@ -8,6 +15,13 @@ from dataset.read_dataset import read_dataset
 
 
 def train(model, input_dataset: EasyDict, output_path):
+    """train the decision tree model
+
+    Arguments:
+        model: the untrained decision tree model
+        input_dataset: a EasyDict that consists of train data set and train labels
+        output_path: where the trained decision tree model will be saved
+    """
     model.fit(
         input_dataset.train.data,
         input_dataset.train.labels)
@@ -23,6 +37,7 @@ def train(model, input_dataset: EasyDict, output_path):
 
 
 def main():
+    """pipline of reading data set and trianing decision model"""
     blur_path = '../data/input/License/Train/Bad_License/'
     clear_path = '../data/input/License/Train/Good_License/'
     output_path = '../data/output/decision_tree/models'

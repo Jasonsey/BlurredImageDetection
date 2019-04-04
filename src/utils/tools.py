@@ -1,3 +1,10 @@
+# Bluerred Image Detection
+# 
+# Author: Jasonsey
+# Email: 2627866800@qq.com
+# 
+# =============================================================================
+"""all the common toools"""
 import os
 from pathlib import Path
 from PIL import Image
@@ -7,8 +14,16 @@ import numpy as np
 
 
 def init_path(paths: list):
-    '''
-    创建路径，不存在则新建
+    '''make direction.
+
+    If the direction is non-existent, the direction will be created.
+    If the direction is existent, nothing will be done.
+
+    Arguments:
+        paths: a list of path. And the path can be string or pathlib.Path
+    
+    Return:
+        None
     '''
     for path in paths:
         p = Path(path)
@@ -17,8 +32,14 @@ def init_path(paths: list):
 
 
 def resize(im: Image, size_min=1300, reduce_anything=True):
-    """
-    resize image.
+    """adjust the image to a minimum size of no less than size_min.
+
+    Arguments:
+        im: pil.Image.Image
+        size_min: the minimum size the image will be adjusted to
+    
+    Returns:
+        the adjusted image
     """
     width, height = im.width, im.height
     if width > size_min and height > size_min and not reduce_anything:
@@ -33,17 +54,21 @@ def resize(im: Image, size_min=1300, reduce_anything=True):
 
 
 def resize2(im: Image, size=256):
-    """
-    调整大小到(x,x)尺寸
+    """adjust the image to (size, size)
+    
+    Arguments:
+        im: pil.Image.Image
+        size: int, the size that the image will be adjusted to
+
+    Returns:
+        the adjusted image
     """
     im = im.resize((size, size), Image.ANTIALIAS)
     return im
 
 
 def focuse_image(img):
-    '''
-    聚焦到图片中心
-    '''
+    """focuse on the center of the image"""
     w, h = 4, 3
     width, height = img.width, img.height
     w, h = (width // w, height // h) if width < height else (width // h, height // w)
@@ -52,9 +77,14 @@ def focuse_image(img):
 
 
 def get_imginfo(path):
-    '''
-    非协程版info读取接口, 返回(tenengrad_score, laplacian_score, area)
-    '''
+    """get image information api for non-concurrent version
+
+    Arguments:
+        path: string or pathlib.Path
+
+    Returns:
+        a tuple of tenengrad_score, laplacian_score and area
+    """
     path = Path(path)
     img = Image.open(path).convert('L')
 
@@ -72,16 +102,19 @@ def get_imginfo(path):
 
 
 async def get_imginfo2(path):
-    '''
-    协程版info读取接口
-    '''
+    """get image information api for concurrent version"""
     return get_imginfo(path)
 
 
 async def get_imgarray(path):
-    '''
-    协程读取图片到array
-    '''
+    """read image an array from path api for non-concurrent version
+    
+    Arguments:
+        path: string or pathlib.Path
+
+    Returns:
+        np.ndarray
+    """
     img = Image.open(path).convert('RGB')
     img = focuse_image(img)
     img = resize2(img)
@@ -89,6 +122,7 @@ async def get_imgarray(path):
 
 
 def get_imginfo_by_array(array):
+    """get image information from np.ndarray"""
     img = Image.fromarray(array).convert('L')
     cv2_img = cv2.cvtColor(array, cv2.COLOR_RGB2GRAY)
 
@@ -107,6 +141,7 @@ def get_imginfo_by_array(array):
 
 
 if __name__ == '__main__':
+    """test code"""
     a = []
     for p in Path('data/input/License/temp/Bad_License/').glob('*.jpg'):
         a.append(list(get_imginfo(p)))
